@@ -6,7 +6,7 @@ HashTableStatusCode ListCtor(List_t* list) {
 	if (!list->head)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
-	list->head->data = (Bucket_t*)calloc(1, sizeof(Bucket_t));
+	list->head->data = (Element_t*)calloc(1, sizeof(Element_t));
 	if (!list->head->data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
@@ -37,7 +37,7 @@ HashTableStatusCode ListDtor(Data_t* cur_data) {
 
 HashTableStatusCode ListAdd(List_t* list, char* word) {
 
-	if (!list->tail)
+	if (!list)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_NULL_POINTER);
 
 	if (list->size == 0) {
@@ -47,13 +47,22 @@ HashTableStatusCode ListAdd(List_t* list, char* word) {
 		return HASHTABLE_NO_ERROR;
 	}
 
+	Data_t* founded = ListFindElement(list->head, word);
+	if (founded) {
+		founded->data->frequency++;
+		return HASHTABLE_NO_ERROR;
+	}
+
+	if (!list->tail)
+		HASHTABLE_ERROR_CHECK(HASHTABLE_NULL_POINTER);
+
 	list->tail->next = (Data_t*)calloc(1, sizeof(Data_t));
 	if (!list->tail->next)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
 	list->tail = list->tail->next;
 
-	list->tail->data = (Bucket_t*)calloc(1, sizeof(Bucket_t));
+	list->tail->data = (Element_t*)calloc(1, sizeof(Element_t));
 	if (!list->tail->data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
@@ -62,6 +71,17 @@ HashTableStatusCode ListAdd(List_t* list, char* word) {
 	list->size++;
 
 	return HASHTABLE_NO_ERROR;
+}
+
+Data_t* ListFindElement(Data_t* data, char* word) {
+
+	if (!data)
+		return NULL;
+
+	if (!strcmp(data->data->word, word))
+		return data;
+
+	return ListFindElement(data->next, word);
 }
 
 HashTableStatusCode ListPrint(List_t* list) {
@@ -82,7 +102,7 @@ HashTableStatusCode ListPrintData(Data_t* data) {
 
 	printf(_LINE"\n");
 	printf(BLUE("Data address: %p")"\n", data);
-	PrintBucket(data->data);
+	PrintElement(data->data);
 	printf(BLUE("Next address: %p")"\n", data->next);
 	printf(_LINE"\n");
 

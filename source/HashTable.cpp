@@ -1,10 +1,10 @@
 #include "HashTable.hpp"
 
-HashTableStatusCode PrintBucket(Bucket_t* bucket) {
+HashTableStatusCode PrintElement(Element_t* Element) {
 
-	printf(BLUE("Bucket address: %p")"\n", bucket);
-	printf(GREEN("Word: %s")"\n", bucket->word);
-	printf(GREEN("Word frequency: %zu")"\n", bucket->frequency);
+	printf(BLUE("Element address: %p")"\n", Element);
+	printf(GREEN("Word: %s")"\n", Element->word);
+	printf(GREEN("Word frequency: %zu")"\n", Element->frequency);
 
 	return HASHTABLE_NO_ERROR;
 }

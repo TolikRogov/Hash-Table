@@ -23,7 +23,7 @@
 }													\
 
 struct Data_t {
-	Bucket_t* data;
+	Element_t* data;
 	Data_t* next;
 };
 
@@ -36,6 +36,7 @@ struct List_t {
 HashTableStatusCode ListCtor(List_t* list);
 HashTableStatusCode ListDtor(Data_t* cur_data);
 HashTableStatusCode ListAdd(List_t* list, char* word);
+Data_t* ListFindElement(Data_t* data, char* word);
 
 HashTableStatusCode ListPrint(List_t* list);
 HashTableStatusCode ListPrintData(Data_t* data);
