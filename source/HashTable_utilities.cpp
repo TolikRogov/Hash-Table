@@ -15,14 +15,14 @@ const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status) {
 
 HashTableStatusCode DataFileRework() {
 	struct stat file_stat = {};
-	stat(_FILE_LOTR, &file_stat);
+	stat(_FILE_INPUT, &file_stat);
 	size_t buf_size = (size_t)file_stat.st_size;
 
 	char* buffer = (char*)calloc(buf_size, sizeof(buffer[0]));
 	if (!buffer)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
-	FILE* input = fopen(_FILE_LOTR, "r");
+	FILE* input = fopen(_FILE_INPUT, "r");
 	if (!input)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 

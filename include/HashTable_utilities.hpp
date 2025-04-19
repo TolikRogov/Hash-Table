@@ -4,10 +4,13 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 #include <ctype.h>
+#include <string.h>
 
 #define _DIR_DATA 		"data/"
-#define _FILE_LOTR 		_DIR_DATA "LOTR.txt"
+#define _FILE_INPUT 	_DIR_DATA "input.txt"
 #define _FILE_REWORK 	_DIR_DATA "rework.txt"
+
+#define _LINE			"----------------------------------------"
 
 #define RED(str) 		"\033[31;1m" str "\033[0m"
 #define YELLOW(str) 	"\033[33;4m" str "\033[0m"
