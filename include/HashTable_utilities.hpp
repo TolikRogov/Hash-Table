@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <ctype.h>
 
 #define _DIR_DATA 		"data/"
 #define _FILE_LOTR 		_DIR_DATA "LOTR.txt"
-#define _FILE_REWORK 	_DIR_DATA "output.txt"
+#define _FILE_REWORK 	_DIR_DATA "rework.txt"
 
 #define RED(str) 		"\033[31;1m" str "\033[0m"
 #define YELLOW(str) 	"\033[33;4m" str "\033[0m"
@@ -39,7 +40,7 @@ enum HashTableStatusCode {
 	HASHTABLE_UNDEFINED_ERROR,
 	HASHTABLE_FILE_OPEN_ERROR,
 	HASHTABLE_FILE_CLOSE_ERROR,
-	HASHTABLE_STREAM_BUFFER_ERROR,
+	HASHTABLE_FILE_READ_ERROR,
 };
 
 const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status);
