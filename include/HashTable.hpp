@@ -1,10 +1,16 @@
 #pragma once
 
-#include "HashTable_utilities.hpp"
+#include "List.hpp"
 
-struct Element_t {
-	char* word;
-	size_t frequency;
+struct Bucket_t {
+	size_t size;
+	List_t* lists;
 };
 
-HashTableStatusCode PrintElement(Element_t* Element);
+struct Buffer {
+	size_t size;
+	char* data;
+};
+
+HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets);
+HashTableStatusCode BucketsDtor(Buffer* buffer, Bucket_t* buckets);

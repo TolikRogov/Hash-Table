@@ -1,19 +1,22 @@
-#include "List.hpp"
+#include "HashTable.hpp"
 
 int main() {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
-	List_t list = {};
+	Buffer buffer = {};
+	Bucket_t buckets = {};
 
-	LIST_CTOR(&list);
-	LIST_PRINT(&list);
+	ht_status = BucketsCtor(&buffer, &buckets);
+	HASHTABLE_ERROR_CHECK(ht_status);
 
-	LIST_ADD(&list, "HUI");
-	LIST_ADD(&list, "HUISHE");
-	LIST_PRINT(&list);
+	printf("Buckets size: %zu\n", buckets.size);
+	printf("Buffer start: %s\n", buffer.data);
 
-	LIST_DTOR(list.head);
+
+
+	ht_status = BucketsDtor(&buffer, &buckets);
+	HASHTABLE_ERROR_CHECK(ht_status);
 
 	return 0;
 }

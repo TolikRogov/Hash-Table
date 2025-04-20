@@ -1,6 +1,6 @@
 #pragma once
 
-#include "HashTable.hpp"
+#include "HashTable_utilities.hpp"
 
 #define LIST_CTOR(list) {							 \
 	ht_status = ListCtor(list);						\
@@ -22,6 +22,11 @@
 	HASHTABLE_ERROR_CHECK(ht_status);				\
 }													\
 
+struct Element_t {
+	char* word;
+	size_t frequency;
+};
+
 struct Data_t {
 	Element_t* data;
 	Data_t* next;
@@ -40,3 +45,4 @@ Data_t* ListFindElement(Data_t* data, char* word);
 
 HashTableStatusCode ListPrint(List_t* list);
 HashTableStatusCode ListPrintData(Data_t* data);
+HashTableStatusCode PrintElement(Element_t* Element);
