@@ -13,6 +13,16 @@ const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status) {
 	}
 }
 
+size_t DJB2Hash(const char* string) {
+
+	size_t hash = 5381;
+
+	for (size_t i = 0; string[i] != '\0'; i++)
+		hash = hash * 33 ^ (size_t)string[i];
+
+	return hash;
+}
+
 HashTableStatusCode DataFileRework() {
 	struct stat file_stat = {};
 	stat(_FILE_INPUT, &file_stat);

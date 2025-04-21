@@ -1,20 +1,24 @@
 #include "HashTable.hpp"
 
-int main() {
+int main(int argc, char* argv[]) {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
+
+	if (argc > 1 && !strcmp(argv[1], _REWORK_KEY)) {
+		DATA_FILE_REWORK();
+		return HASHTABLE_NO_ERROR;
+	}
 
 	Buffer buffer = {};
 	Bucket_t buckets = {};
 
-	ht_status = BucketsCtor(&buffer, &buckets);
-	HASHTABLE_ERROR_CHECK(ht_status);
+	BUFFER_CTOR(&buffer);
+	BUCKETS_CTOR(&buffer, &buckets);
 
-	ht_status = BucketsUploader(&buffer, &buckets);
-	HASHTABLE_ERROR_CHECK(ht_status);
+	BUCKETS_UPLOADER(&buffer, &buckets);
 
-	ht_status = BucketsDtor(&buffer, &buckets);
-	HASHTABLE_ERROR_CHECK(ht_status);
+	BUCKETS_DTOR(&buckets);
+	BUFFER_DTOR(&buffer);
 
 	return 0;
 }

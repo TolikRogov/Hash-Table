@@ -11,12 +11,18 @@
 #define _FILE_REWORK 	_DIR_DATA "rework.txt"
 
 #define _LINE			"----------------------------------------"
+#define _REWORK_KEY		"--rework"
 
 #define RED(str) 		"\033[31;1m" str "\033[0m"
 #define YELLOW(str) 	"\033[33;4m" str "\033[0m"
 #define GREEN(str) 		"\033[32;1m" str "\033[0m"
 #define BLUE(str)		"\033[34;1m" str "\033[0m"
 #define TEAL(str)		"\033[36;1m" str "\033[0m"
+
+#define DATA_FILE_REWORK() {					 \
+	ht_status = DataFileRework();				\
+	HASHTABLE_ERROR_CHECK(ht_status);			\
+}												\
 
 #define HASHTABLE_ERROR_CHECK(status) {																			 \
 	if (status != HASHTABLE_NO_ERROR) {																			\
@@ -47,4 +53,5 @@ enum HashTableStatusCode {
 };
 
 const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status);
+size_t DJB2Hash(const char* string);
 HashTableStatusCode DataFileRework();

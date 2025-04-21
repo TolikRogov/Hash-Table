@@ -90,7 +90,8 @@ HashTableStatusCode ListPrint(List_t* list) {
 	printf(BLUE("List size: %zu")"\n", list->size);
 	printf(BLUE("Head address: %p")"\n", list->head);
 	printf(BLUE("Tail address: %p")"\n", list->tail);
-	ListPrintData(list->head);
+	if (list->size)
+		ListPrintData(list->head);
 
 	return HASHTABLE_NO_ERROR;
 }
