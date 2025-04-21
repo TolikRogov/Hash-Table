@@ -74,43 +74,37 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 		LIST_PRINT((buckets->lists + i));
 	}
 
-	FILE* dump = fopen(_FILE_DUMP, "w");
+	FILE* dump = fopen(_DIR_DUMP _FILE_DUMP, "w");
 	if (!dump)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
-	fprintf(dump, "\\documentclass[12pt, a4paper]{report}\n"
-				  "\\usepackage[english]{babel}\n"
-				  "\\usepackage{pgfplots}\n"
-				  "\\pgfplotsset{compat=1.18}\n"
-				  "\\usepackage{luacode}\n"
-				  "\\begin{document}\n"
-				  "\\begin{figure}[htbp]\n"
-  				  "\t\\centering\n"
-  				  "\t\\begin{tikzpicture}\n"
-    			  "\t\t\\begin{axis}[\n"
-     			  "\t\t\ttitle={Buckets dump},\n"
-     			  "\t\t\txlabel={Bucket number},\n"
-      			  "\t\t\tylabel={Buckets size},\n"
-      			  "\t\t\tgrid=major,\n"
-      			  "\t\t\tlegend pos=north west,]\n"
-      			  "\t\t\t\\addplot+[blue, thick, mark=none] table {%s};\n"
-    			  "\t\t\\end{axis}\n"
-  				  "\t\\end{tikzpicture}\n"
-				  "\\end{figure}\n"
-				  "\\end{document}\n", "data.dat");
+	fprintf(dump, "import pandas as pd\n"
+				  "import matplotlib.pyplot as plt\n"
+				  "data = pd.read_csv('%s', sep='\\s+')\n"
+				  "plt.plot(data['x'], data['y'], 'b-', label='Data')\n"
+				  "plt.xlabel('Bucket number')\n"
+				  "plt.ylabel('Bucket size')\n"
+				  "plt.title('Buckets dump')\n"
+				  "plt.grid(True)\n"
+			      "plt.legend()\n"
+				  "plt.savefig('plot.svg', dpi=300)\n"
+				  "plt.show()\n", _FILE_DATA);
 
 	if (fclose(dump))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
-	FILE* data = fopen(_FILE_DATA, "w");
+	FILE* data = fopen(_DIR_DUMP _FILE_DATA, "w");
 	if (!data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
+	fprintf(data, "x y\n");
 	for (size_t i = 0; i < buckets->size; i++)
 		fprintf(data, "%zu %zu\n", i, buckets->lists[i].size);
 
 	if (fclose(data))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
+
+	system("cd " _DIR_DUMP "; python3 " _FILE_DUMP "; cd ../");
 
 	return HASHTABLE_NO_ERROR;
 }
