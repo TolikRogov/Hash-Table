@@ -33,6 +33,23 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 	return HASHTABLE_NO_ERROR;
 }
 
+HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
+
+	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
+
+	size_t shift = 0;
+	for (size_t i = 0; i < buckets->size; i++) {
+		char* word = buffer->data + shift;
+		size_t hash = DJB2Hash(word);
+		List_t* list = &buckets->lists[hash % buckets->size];
+		LIST_CTOR(list);
+		LIST_ADD(list, word);
+		shift += strlen(word) + 1;
+	}
+
+	return HASHTABLE_NO_ERROR;
+}
+
 HashTableStatusCode BucketsDtor(Buffer* buffer, Bucket_t* buckets) {
 
 	if (buffer && buffer->data) {
@@ -46,4 +63,14 @@ HashTableStatusCode BucketsDtor(Buffer* buffer, Bucket_t* buckets) {
 	}
 
 	return HASHTABLE_NO_ERROR;
+}
+
+size_t DJB2Hash(const char* string) {
+
+	size_t hash = 5381;
+
+	for (size_t i = 0; string[i] != '\0'; i++)
+		hash = hash * 33 ^ (size_t)string[i];
+
+	return hash;
 }

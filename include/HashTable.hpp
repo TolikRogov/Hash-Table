@@ -14,3 +14,6 @@ struct Buffer {
 
 HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets);
 HashTableStatusCode BucketsDtor(Buffer* buffer, Bucket_t* buckets);
+HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets);
+
+size_t DJB2Hash(const char* string);

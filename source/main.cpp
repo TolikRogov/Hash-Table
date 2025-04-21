@@ -10,10 +10,8 @@ int main() {
 	ht_status = BucketsCtor(&buffer, &buckets);
 	HASHTABLE_ERROR_CHECK(ht_status);
 
-	printf("Buckets size: %zu\n", buckets.size);
-	printf("Buffer start: %s\n", buffer.data);
-
-
+	ht_status = BucketsUploader(&buffer, &buckets);
+	HASHTABLE_ERROR_CHECK(ht_status);
 
 	ht_status = BucketsDtor(&buffer, &buckets);
 	HASHTABLE_ERROR_CHECK(ht_status);
