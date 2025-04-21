@@ -41,8 +41,9 @@ struct Bucket_t {
 
 struct Buffer {
 	size_t size;
-	size_t words_cnt;
 	char* data;
+	size_t words_cnt;
+	size_t* words_length;
 };
 
 HashTableStatusCode BufferCtor(Buffer* buffer);
@@ -51,5 +52,6 @@ HashTableStatusCode BufferDtor(Buffer* buffer);
 HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets);
 HashTableStatusCode BucketsDtor(Bucket_t* buckets);
 HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets);
+HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets);
 
 HashTableStatusCode BucketsDump(Bucket_t* buckets);

@@ -19,6 +19,13 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	if (fclose(rework))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
+	for (size_t i = 0; i < buffer->size; i++) {
+		if (buffer->data[i] == '\n') {
+			buffer->data[i] = '\0';
+			buffer->words_cnt++;
+		}
+	}
+
 	return HASHTABLE_NO_ERROR;
 }
 
@@ -26,15 +33,7 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
-	for (size_t i = 0; i < buffer->size; i++) {
-		if (buffer->data[i] == '\n') {
-			buffer->data[i] = '\0';
-			buckets->size++;
-		}
-	}
-
-	buffer->words_cnt = buckets->size;
-	buckets->size /= LOAD_FACTOR;
+	buckets->size = buffer->words_cnt / LOAD_FACTOR;
 	buckets->lists = (List_t*)calloc(buckets->size, sizeof(List_t));
 	if (!buckets->lists)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
@@ -61,6 +60,24 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 #ifdef DEBUG
 	BUCKETS_DUMP(buckets);
 #endif
+
+	return HASHTABLE_NO_ERROR;
+}
+
+HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
+
+	for (size_t n = 0; n < 555; n++) {
+		size_t shift = 0;
+		for (size_t word_num = 0; word_num < buffer->words_cnt; word_num++) {
+			char* word = buffer->data + shift;
+			size_t hash = DJB2Hash(word);
+			List_t* list = &buckets->lists[hash % buckets->size];
+			Data_t* found = ListFindElement(list->head, word);
+			if (!found)
+				printf(RED("%s was not found")"\n", word);
+			shift += strlen(word) + 1;
+		}
+	}
 
 	return HASHTABLE_NO_ERROR;
 }

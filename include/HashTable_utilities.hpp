@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 #include <string.h>
+#include <time.h>
 
 #define _DIR_DUMP		"Dump/"
 #define _FILE_DUMP		"dump.py"
