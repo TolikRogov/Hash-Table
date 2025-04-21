@@ -3,6 +3,7 @@
 #include "List.hpp"
 
 const size_t LOAD_FACTOR = 15;
+const size_t FINDER_ITERATIONS = 800;
 
 #define BUCKETS_CTOR(buffer, buckets) {						 \
 	ht_status = BucketsCtor(buffer, buckets);				\

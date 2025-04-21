@@ -22,10 +22,8 @@ HashTableStatusCode ListDtor(Data_t* cur_data) {
 		cur_data->data = NULL;
 	}
 
-	if (cur_data->next == NULL)
-		return HASHTABLE_NO_ERROR;
-
-	ListDtor(cur_data->next);
+	if (cur_data->next != NULL)
+		ListDtor(cur_data->next);
 
 	if (cur_data) {
 		free(cur_data);

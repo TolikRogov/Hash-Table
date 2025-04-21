@@ -66,7 +66,7 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 
 HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 
-	for (size_t n = 0; n < 555; n++) {
+	for (size_t n = 0; n < FINDER_ITERATIONS; n++) {
 		size_t shift = 0;
 		for (size_t word_num = 0; word_num < buffer->words_cnt; word_num++) {
 			char* word = buffer->data + shift;
@@ -97,7 +97,7 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 
 	fprintf(dump, "import pandas as pd\n"
 				  "import matplotlib.pyplot as plt\n"
-				  "data = pd.read_csv('%s', sep='\\s+')\n"
+				  "data = pd.read_csv('%s', sep=' ')\n"
 				  "plt.plot(data['x'], data['y'], 'b-', label='Data')\n"
 				  "plt.xlabel('Bucket number')\n"
 				  "plt.ylabel('Bucket size')\n"
@@ -121,7 +121,8 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 	if (fclose(data))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
-	system("cd " _DIR_DUMP "; python3 " _FILE_DUMP "; cd ../");
+	if (system("cd " _DIR_DUMP "; python3 " _FILE_DUMP "; cd ../") == -1)
+		HASHTABLE_ERROR_CHECK(HASHTABLE_SYSTEM_SHELL_ERROR);
 
 	return HASHTABLE_NO_ERROR;
 }

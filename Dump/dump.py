@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-data = pd.read_csv('data.dat', sep='\s+')
+data = pd.read_csv('data.dat', sep=' ')
 plt.plot(data['x'], data['y'], 'b-', label='Data')
 plt.xlabel('Bucket number')
 plt.ylabel('Bucket size')

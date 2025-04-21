@@ -55,6 +55,7 @@ enum HashTableStatusCode {
 	HASHTABLE_FILE_OPEN_ERROR,
 	HASHTABLE_FILE_CLOSE_ERROR,
 	HASHTABLE_FILE_READ_ERROR,
+	HASHTABLE_SYSTEM_SHELL_ERROR,
 };
 
 const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status);
