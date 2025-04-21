@@ -29,8 +29,8 @@ const size_t LOAD_FACTOR = 15;
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
-#define BUCKETS_PRINT(buckets) {					 		 \
-	ht_status = BucketsPrint(buckets);						\
+#define BUCKETS_DUMP(buckets) {					 		 	 \
+	ht_status = BucketsDump(buckets);						\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
@@ -52,4 +52,4 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets);
 HashTableStatusCode BucketsDtor(Bucket_t* buckets);
 HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets);
 
-HashTableStatusCode BucketsPrint(Bucket_t* buckets);
+HashTableStatusCode BucketsDump(Bucket_t* buckets);

@@ -6,6 +6,10 @@
 #include <ctype.h>
 #include <string.h>
 
+#define _DIR_LATEX		"LaTex/"
+#define _FILE_DUMP		_DIR_LATEX "dump.tex"
+#define _FILE_DATA		_DIR_LATEX "data.dat"
+
 #define _DIR_DATA 		"data/"
 #define _FILE_INPUT 	_DIR_DATA "input.txt"
 #define _FILE_REWORK 	_DIR_DATA "rework.txt"
