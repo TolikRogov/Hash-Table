@@ -10,6 +10,9 @@ int main(int argc, char* argv[]) {
 		return HASHTABLE_NO_ERROR;
 	}
 
+	printf("%x\n", crc32_u32(CRC32_INIT_CRC, "1234"));
+	return 0;
+
 	Buffer buffer = {};
 	Bucket_t buckets = {};
 

@@ -51,8 +51,10 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 	size_t shift = 0;
 	for (size_t i = 0; i < buffer->words_cnt; i++) {
 		char* word = buffer->data + shift;
-		size_t hash = DJB2Hash(word);
+
+		size_t hash = crc32_u32(CRC32_INIT_CRC, word);
 		List_t* list = &buckets->lists[hash % buckets->size];
+
 		LIST_ADD(list, word);
 		shift += strlen(word) + 1;
 	}
@@ -68,11 +70,14 @@ HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 
 	for (size_t n = 0; n < FINDER_ITERATIONS; n++) {
 		size_t shift = 0;
+
 		for (size_t word_num = 0; word_num < buffer->words_cnt; word_num++) {
 			char* word = buffer->data + shift;
-			size_t hash = DJB2Hash(word);
+			size_t hash = crc32_u32(CRC32_INIT_CRC, word);
+
 			List_t* list = &buckets->lists[hash % buckets->size];
 			Data_t* found = ListFindElement(list->head, word);
+
 			if (!found)
 				printf(RED("%s was not found")"\n", word);
 			shift += strlen(word) + 1;

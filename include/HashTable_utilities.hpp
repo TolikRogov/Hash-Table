@@ -6,6 +6,7 @@
 #include <ctype.h>
 #include <string.h>
 #include <time.h>
+#include <limits.h>
 
 #define _DIR_DUMP		"Dump/"
 #define _FILE_DUMP		"dump.py"
@@ -47,6 +48,9 @@
 	}																											\
 }
 
+const u_int32_t CRC32_POLYNOMIAL 	= 0xEDB88320;
+const u_int32_t CRC32_INIT_CRC 		= 0xFFFFFFFF;
+
 enum HashTableStatusCode {
 	HASHTABLE_NO_ERROR,
 	HASHTABLE_ALLOCATION_ERROR,
@@ -60,4 +64,5 @@ enum HashTableStatusCode {
 
 const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status);
 size_t DJB2Hash(const char* string);
+u_int32_t crc32_u32(u_int32_t init_crc, const char* word);
 HashTableStatusCode DataFileRework();
