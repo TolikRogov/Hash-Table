@@ -2,35 +2,36 @@
 
 #include "List.hpp"
 
-const size_t LOAD_FACTOR = 15;
-const size_t FINDER_ITERATIONS = 800;
+const size_t AMOUNT_UNIQUE_WORDS 	= 19030;
+const size_t LOAD_FACTOR 			= 15;
+const size_t FINDER_ITERATIONS 		= 330;
 
-#define BUCKETS_CTOR(buffer, buckets) {						 \
+#define BUCKETS_CTOR(buffer, buckets) {						\
 	ht_status = BucketsCtor(buffer, buckets);				\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
-#define BUFFER_CTOR(buffer) {						 		 \
+#define BUFFER_CTOR(buffer) {						 		\
 	ht_status = BufferCtor(buffer);							\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
-#define BUCKETS_UPLOADER(buffer, buckets) {					 \
+#define BUCKETS_UPLOADER(buffer, buckets) {					\
 	ht_status = BucketsUploader(buffer, buckets);			\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
-#define BUCKETS_DTOR(buckets) {					 			 \
+#define BUCKETS_DTOR(buckets) {					 			\
 	ht_status = BucketsDtor(buckets);						\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
-#define BUFFER_DTOR(buffer) {					 			 \
+#define BUFFER_DTOR(buffer) {					 			\
 	ht_status = BufferDtor(buffer);							\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
-#define BUCKETS_DUMP(buckets) {					 		 	 \
+#define BUCKETS_DUMP(buckets) {					 		 	\
 	ht_status = BucketsDump(buckets);						\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\

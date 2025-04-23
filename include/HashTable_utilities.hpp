@@ -7,6 +7,7 @@
 #include <string.h>
 #include <time.h>
 #include <limits.h>
+#include <nmmintrin.h>
 
 #define _DIR_DUMP		"Dump/"
 #define _FILE_DUMP		"dump.py"

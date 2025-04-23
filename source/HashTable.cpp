@@ -33,7 +33,7 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
-	buckets->size = buffer->words_cnt / LOAD_FACTOR;
+	buckets->size = AMOUNT_UNIQUE_WORDS / LOAD_FACTOR;
 	buckets->lists = (List_t*)calloc(buckets->size, sizeof(List_t));
 	if (!buckets->lists)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
