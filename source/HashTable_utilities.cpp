@@ -14,17 +14,14 @@ const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status) {
 	}
 }
 
-u_int32_t crc32_u32(u_int32_t init_crc, const char* word) {
-	u_int32_t crc = init_crc;
+u_int32_t crc32(u_int32_t crc, u_int32_t val) {
 
-	for (size_t i = 0; word[i] != '\0'; i++) {
-		crc ^= (u_int32_t)word[i];
-		for (size_t bit_in_byte = 0; bit_in_byte < CHAR_BIT; bit_in_byte++) {
-			if (crc & 1)
-				crc = (crc >> 1) ^ CRC32_POLYNOMIAL;
-			else
-				crc >>= 1;
-		}
+	crc ^= val;
+	for (size_t bit_in_byte = 0; bit_in_byte < CHAR_BIT * sizeof(u_int32_t); bit_in_byte++) {
+		if (crc & 1)
+			crc = (crc >> 1) ^ CRC32_POLYNOMIAL;
+		else
+			crc >>= 1;
 	}
 
 	return crc ^ 0xFFFFFFFF;

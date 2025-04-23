@@ -10,6 +10,17 @@ int main(int argc, char* argv[]) {
 		return HASHTABLE_NO_ERROR;
 	}
 
+	const char* word = "1234";
+	u_int32_t value = *(const u_int32_t*)word;
+	u_int32_t crc = CRC32_INIT_CRC;
+	printf("0x%X\n", crc32(crc, value));
+
+	crc = CRC32_INIT_CRC;
+	crc = _mm_crc32_u32(crc, value);
+	crc ^= 0xFFFFFFFF;
+	printf("0x%X\n", crc);
+	return 0;
+
 	Buffer buffer = {};
 	Bucket_t buckets = {};
 
