@@ -14,25 +14,43 @@ const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status) {
 	}
 }
 
-u_int32_t crc32(u_int32_t crc, u_int32_t val) {
+HashTableStatusCode crc32_gentable(hash_t* table) {
 
-	crc ^= val;
-	for (size_t bit_in_byte = 0; bit_in_byte < CHAR_BIT * sizeof(u_int32_t); bit_in_byte++) {
-		if (crc & 1)
-			crc = (crc >> 1) ^ CRC32_POLYNOMIAL;
-		else
-			crc >>= 1;
+	hash_t crc = 0;
+
+	for (hash_t byte_value = 0; byte_value < CRC32_TABLE_SIZE; byte_value++) {
+		crc = byte_value;
+
+		for (size_t bit_value = 0; bit_value < CHAR_BIT; bit_value++) {
+			if (crc & 1)
+				crc = (crc >> 1) ^ CRC32_POLYNOMIAL;
+			else
+				crc >>= 1;
+		}
+		table[byte_value] = crc;
+	}
+
+	return HASHTABLE_NO_ERROR;
+}
+
+hash_t crc32(const void* bytes, const size_t size_in_bytes, hash_t* table) {
+
+	hash_t crc = CRC32_INIT_CRC;
+
+	for (size_t i = 0; i < size_in_bytes; i++) {
+		hash_t byte = (hash_t)(*((const char*)bytes + i));
+		crc = (crc >> 8) ^ table[(crc ^ byte) & 0xFF];
 	}
 
 	return crc ^ 0xFFFFFFFF;
 }
 
-size_t DJB2Hash(const char* string) {
+hash_t DJB2Hash(const void* bytes, const size_t size_in_bytes) {
 
-	size_t hash = 5381;
+	hash_t hash = 5381;
 
-	for (size_t i = 0; string[i] != '\0'; i++)
-		hash = hash * 33 ^ (size_t)string[i];
+	for (size_t i = 0; i < size_in_bytes; i++)
+		hash = hash * 33 ^ (hash_t)(*((const char*)bytes + i));
 
 	return hash;
 }

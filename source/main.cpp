@@ -10,19 +10,15 @@ int main(int argc, char* argv[]) {
 		return HASHTABLE_NO_ERROR;
 	}
 
-	const char* word = "1234";
-	u_int32_t value = *(const u_int32_t*)word;
-	u_int32_t crc = CRC32_INIT_CRC;
-	printf("0x%X\n", crc32(crc, value));
+	hash_t crc32_table[CRC32_TABLE_SIZE] = {};
+	crc32_gentable(crc32_table);
 
-	crc = CRC32_INIT_CRC;
-	crc = _mm_crc32_u32(crc, value);
-	crc ^= 0xFFFFFFFF;
-	printf("0x%X\n", crc);
+	const char* word = "1234";
+	printf("0x%X\n", crc32(word, strlen(word), crc32_table));
 	return 0;
 
 	Buffer buffer = {};
-	Bucket_t buckets = {};
+	Bucket_t buckets = {.table = crc32_table};
 
 	BUFFER_CTOR(&buffer);
 	BUCKETS_CTOR(&buffer, &buckets);

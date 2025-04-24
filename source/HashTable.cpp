@@ -53,7 +53,7 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 		char* word = buffer->data + shift;
 		size_t length = strlen(word);
 
-		size_t hash = crc32(CRC32_INIT_CRC, *(u_int32_t*)word);
+		size_t hash = crc32(word, length, buckets->table);
 		List_t* list = &buckets->lists[hash % buckets->size];
 
 		LIST_ADD(list, word);
@@ -75,7 +75,7 @@ HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 		for (size_t word_num = 0; word_num < buffer->words_cnt; word_num++) {
 			char* word = buffer->data + shift;
 			size_t length = strlen(word);
-			size_t hash = crc32(CRC32_INIT_CRC, *(u_int32_t*)word);
+			size_t hash = crc32(word, length, buckets->table);
 
 			List_t* list = &buckets->lists[hash % buckets->size];
 			Data_t* found = ListFindElement(list->head, word);

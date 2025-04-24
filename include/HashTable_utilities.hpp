@@ -9,8 +9,11 @@
 #include <limits.h>
 #include <nmmintrin.h>
 
-const u_int32_t CRC32_POLYNOMIAL 	= 0xEDB88320;
-const u_int32_t CRC32_INIT_CRC 		= 0xFFFFFFFF;
+typedef u_int32_t hash_t;
+
+const hash_t CRC32_POLYNOMIAL 	= 0xEDB88320;
+const hash_t CRC32_INIT_CRC 	= 0xFFFFFFFF;
+const size_t CRC32_TABLE_SIZE	= UCHAR_MAX + 1;
 
 #define _DIR_DUMP		"Dump/"
 #define _FILE_DUMP		"dump.py"
@@ -64,6 +67,9 @@ enum HashTableStatusCode {
 };
 
 const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status);
-size_t DJB2Hash(const char* string);
-u_int32_t crc32(u_int32_t crc, u_int32_t val);
+hash_t DJB2Hash(const void* bytes, const size_t size_in_bytes);
+
+HashTableStatusCode crc32_gentable(hash_t* table);
+hash_t crc32(const void* bytes, const size_t size_in_bytes, hash_t* table);
+
 HashTableStatusCode DataFileRework();
