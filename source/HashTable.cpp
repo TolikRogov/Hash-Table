@@ -49,7 +49,7 @@ List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 	size_t length = strlen(*word);
 	buffer->shift += length + 1;
 
-	size_t hash = crc32Hash(*word, length);
+	size_t hash = buckets->hash_function(*word, length);
 	return buckets->lists + (hash % buckets->size);
 }
 
@@ -114,8 +114,8 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 				  "plt.title('Buckets dump')\n"
 				  "plt.grid(True)\n"
 			      "plt.legend()\n"
-				  "plt.savefig('plot.svg', dpi=300)\n"
-				  "plt.show()\n", _FILE_DATA);
+				  "plt.savefig('%ls.svg', dpi=300)\n"
+				  "plt.show()\n", _FILE_DATA, GetHashFunctionName(buckets->hash_func_num));
 
 	if (fclose(dump))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);

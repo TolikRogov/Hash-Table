@@ -8,12 +8,7 @@
 #include <time.h>
 #include <limits.h>
 #include <nmmintrin.h>
-
-typedef u_int32_t hash_t;
-
-const hash_t CRC32_POLYNOMIAL 	= 0xEDB88320;
-const hash_t CRC32_INIT_CRC 	= 0xFFFFFFFF;
-const size_t CRC32_TABLE_SIZE	= UCHAR_MAX + 1;
+#include <stdint.h>
 
 #define _DIR_DUMP		"Dump/"
 #define _FILE_DUMP		"dump.py"
@@ -23,9 +18,12 @@ const size_t CRC32_TABLE_SIZE	= UCHAR_MAX + 1;
 #define _FILE_INPUT 	_DIR_DATA "input.txt"
 #define _FILE_REWORK 	_DIR_DATA "rework.txt"
 
-#define _LINE			"----------------------------------------"
-#define _REWORK_KEY		"--rework"
+#define _REWORK_KEY					"--rework"
+#define _DJB2HASH_KEY				"--djb2"
+#define _CRC32HASH_KEY				"--crc32"
+#define _CRC32_INTRINSIC_HASH_KEY	"--crc32_intrinsic"
 
+#define _LINE			"----------------------------------------"
 #define RED(str) 		"\033[31;1m" str "\033[0m"
 #define YELLOW(str) 	"\033[33;4m" str "\033[0m"
 #define GREEN(str) 		"\033[32;1m" str "\033[0m"
@@ -64,13 +62,8 @@ enum HashTableStatusCode {
 	HASHTABLE_FILE_CLOSE_ERROR,
 	HASHTABLE_FILE_READ_ERROR,
 	HASHTABLE_SYSTEM_SHELL_ERROR,
+	HASHTABLE_COMPILE_KEYS_ERROR,
 };
 
 const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status);
-
-HashTableStatusCode crc32HashGentable(hash_t* table);
-hash_t DJB2Hash(const void* bytes, const size_t size_in_bytes);
-hash_t crc32Hash(const void* bytes, const size_t size_in_bytes);
-hash_t crc32IntrinsicHash(const void* bytes, const size_t size_in_bytes);
-
 HashTableStatusCode DataFileRework();

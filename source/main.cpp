@@ -7,15 +7,31 @@ int main(int argc, char* argv[]) {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
-	if (argc > 1 && !strcmp(argv[1], _REWORK_KEY)) {
-		DATA_FILE_REWORK();
-		return HASHTABLE_NO_ERROR;
-	}
-
-	crc32HashGentable(crc32_table);
+	if (argc < 2)
+		HASHTABLE_ERROR_CHECK(HASHTABLE_COMPILE_KEYS_ERROR);
 
 	Buffer buffer = {};
 	Bucket_t buckets = {};
+
+	if (!strcmp(argv[1], _REWORK_KEY)) {
+		DATA_FILE_REWORK();
+		return HASHTABLE_NO_ERROR;
+	}
+	if (!strcmp(argv[1], _DJB2HASH_KEY)) {
+		buckets.hash_function = DJB2Hash;
+		buckets.hash_func_num = HASH_DJB2;
+	}
+	else if (!strcmp(argv[1], _CRC32HASH_KEY)) {
+		crc32HashGentable(crc32_table);
+		buckets.hash_function = crc32Hash;
+		buckets.hash_func_num = HASH_CRC32;
+	}
+	else if (!strcmp(argv[1], _CRC32_INTRINSIC_HASH_KEY)) {
+		buckets.hash_function = crc32IntrinsicHash;
+		buckets.hash_func_num = HASH_CRC32_INTRINSIC;
+	}
+	else
+		HASHTABLE_ERROR_CHECK(HASHTABLE_COMPILE_KEYS_ERROR);
 
 	BUFFER_CTOR(&buffer);
 	BUCKETS_CTOR(&buffer, &buckets);
@@ -28,5 +44,5 @@ int main(int argc, char* argv[]) {
 
 	printf("PROGRAM TIME: %lg sec\n", (double)(clock() - start_t) / CLOCKS_PER_SEC);
 
-	return 0;
+	return HASHTABLE_NO_ERROR;
 }

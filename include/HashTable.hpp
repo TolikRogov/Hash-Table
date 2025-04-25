@@ -1,5 +1,6 @@
 #pragma once
 
+#include "HashFunctions.hpp"
 #include "List.hpp"
 
 const size_t AMOUNT_UNIQUE_WORDS 	= 19030;
@@ -39,6 +40,8 @@ const size_t FINDER_ITERATIONS 		= 700;
 struct Bucket_t {
 	size_t size;
 	List_t* lists;
+	hash_func_t hash_function;
+	HashFunction hash_func_num;
 };
 
 struct Buffer {
