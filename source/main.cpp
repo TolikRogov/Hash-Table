@@ -13,10 +13,6 @@ int main(int argc, char* argv[]) {
 	hash_t crc32_table[CRC32_TABLE_SIZE] = {};
 	crc32_gentable(crc32_table);
 
-	const char* word = "1234";
-	printf("0x%X\n", crc32(word, strlen(word), crc32_table));
-	return 0;
-
 	Buffer buffer = {};
 	Bucket_t buckets = {.table = crc32_table};
 

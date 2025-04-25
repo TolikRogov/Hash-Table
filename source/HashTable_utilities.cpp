@@ -14,6 +14,17 @@ const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status) {
 	}
 }
 
+hash_t crc32_intrinsic(const void* bytes, const size_t size_in_bytes) {
+
+    hash_t crc = CRC32_INIT_CRC;
+	const u_char* byte = (const u_char*)bytes;
+
+	for (size_t i = 0; i < size_in_bytes; i++)
+		crc = _mm_crc32_u8(crc, *byte++);
+
+    return crc ^ 0xFFFFFFFF;
+}
+
 HashTableStatusCode crc32_gentable(hash_t* table) {
 
 	hash_t crc = 0;
@@ -36,11 +47,10 @@ HashTableStatusCode crc32_gentable(hash_t* table) {
 hash_t crc32(const void* bytes, const size_t size_in_bytes, hash_t* table) {
 
 	hash_t crc = CRC32_INIT_CRC;
+	const u_char* u_byte = (const u_char*)bytes;
 
-	for (size_t i = 0; i < size_in_bytes; i++) {
-		hash_t byte = (hash_t)(*((const char*)bytes + i));
-		crc = (crc >> 8) ^ table[(crc ^ byte) & 0xFF];
-	}
+	for (size_t i = 0; i < size_in_bytes; i++)
+		crc = (crc >> 8) ^ table[(crc ^ *(const hash_t*)(u_byte++)) & 0xFF];
 
 	return crc ^ 0xFFFFFFFF;
 }

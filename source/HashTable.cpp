@@ -44,21 +44,28 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 	return HASHTABLE_NO_ERROR;
 }
 
+List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
+	*word = buffer->data + buffer->shift;
+	size_t length = strlen(*word);
+
+	size_t hash = crc32(*word, length, buckets->table);
+	buffer->shift += length + 1;
+
+	return buckets->lists + (hash % buckets->size);
+}
+
 HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
-	size_t shift = 0;
+	char* word = NULL;
+
 	for (size_t i = 0; i < buffer->words_cnt; i++) {
-		char* word = buffer->data + shift;
-		size_t length = strlen(word);
-
-		size_t hash = crc32(word, length, buckets->table);
-		List_t* list = &buckets->lists[hash % buckets->size];
-
+		List_t* list = FindListForWord(buffer, buckets, &word);
 		LIST_ADD(list, word);
-		shift += length + 1;
 	}
+
+	buffer->shift = 0;
 
 #ifdef DEBUG
 	BUCKETS_DUMP(buckets);
@@ -70,20 +77,17 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 
 	for (size_t n = 0; n < FINDER_ITERATIONS; n++) {
-		size_t shift = 0;
+
+		char* word = NULL;
 
 		for (size_t word_num = 0; word_num < buffer->words_cnt; word_num++) {
-			char* word = buffer->data + shift;
-			size_t length = strlen(word);
-			size_t hash = crc32(word, length, buckets->table);
-
-			List_t* list = &buckets->lists[hash % buckets->size];
+			List_t* list = FindListForWord(buffer, buckets, &word);
 			Data_t* found = ListFindElement(list->head, word);
-
 			if (!found)
 				printf(RED("%s was not found")"\n", word);
-			shift += length + 1;
 		}
+
+		buffer->shift = 0;
 	}
 
 	return HASHTABLE_NO_ERROR;

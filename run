@@ -6,6 +6,5 @@
 
 cmake -S ./ -B build/Debug -DCMAKE_BUILD_TYPE=Debug
 cmake --build build/Debug
-#valgrind --tool=cachegrind ./build/Debug/HashTable
 #valgrind --tool=callgrind ./build/Debug/HashTable
 ./build/Debug/HashTable

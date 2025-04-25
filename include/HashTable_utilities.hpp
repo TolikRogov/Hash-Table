@@ -71,5 +71,6 @@ hash_t DJB2Hash(const void* bytes, const size_t size_in_bytes);
 
 HashTableStatusCode crc32_gentable(hash_t* table);
 hash_t crc32(const void* bytes, const size_t size_in_bytes, hash_t* table);
+hash_t crc32_intrinsic(const void* bytes, const size_t size_in_bytes);
 
 HashTableStatusCode DataFileRework();
