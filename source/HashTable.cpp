@@ -47,10 +47,9 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 	*word = buffer->data + buffer->shift;
 	size_t length = strlen(*word);
-
-	size_t hash = crc32(*word, length, buckets->table);
 	buffer->shift += length + 1;
 
+	size_t hash = crc32Hash(*word, length);
 	return buckets->lists + (hash % buckets->size);
 }
 

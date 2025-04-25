@@ -14,7 +14,7 @@ const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status) {
 	}
 }
 
-hash_t crc32_intrinsic(const void* bytes, const size_t size_in_bytes) {
+hash_t crc32IntrinsicHash(const void* bytes, const size_t size_in_bytes) {
 
     hash_t crc = CRC32_INIT_CRC;
 	const u_char* byte = (const u_char*)bytes;
@@ -25,7 +25,7 @@ hash_t crc32_intrinsic(const void* bytes, const size_t size_in_bytes) {
     return crc ^ 0xFFFFFFFF;
 }
 
-HashTableStatusCode crc32_gentable(hash_t* table) {
+HashTableStatusCode crc32HashGentable(hash_t* table) {
 
 	hash_t crc = 0;
 
@@ -44,13 +44,14 @@ HashTableStatusCode crc32_gentable(hash_t* table) {
 	return HASHTABLE_NO_ERROR;
 }
 
-hash_t crc32(const void* bytes, const size_t size_in_bytes, hash_t* table) {
+hash_t crc32Hash(const void* bytes, const size_t size_in_bytes) {
 
 	hash_t crc = CRC32_INIT_CRC;
 	const u_char* u_byte = (const u_char*)bytes;
+	extern hash_t crc32_table[CRC32_TABLE_SIZE];
 
 	for (size_t i = 0; i < size_in_bytes; i++)
-		crc = (crc >> 8) ^ table[(crc ^ *(const hash_t*)(u_byte++)) & 0xFF];
+		crc = (crc >> 8) ^ crc32_table[(crc ^ *(const hash_t*)(u_byte++)) & 0xFF];
 
 	return crc ^ 0xFFFFFFFF;
 }

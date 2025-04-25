@@ -39,7 +39,6 @@ const size_t FINDER_ITERATIONS 		= 700;
 struct Bucket_t {
 	size_t size;
 	List_t* lists;
-	hash_t* table;
 };
 
 struct Buffer {

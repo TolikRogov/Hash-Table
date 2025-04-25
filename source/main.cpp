@@ -1,5 +1,7 @@
 #include "HashTable.hpp"
 
+hash_t crc32_table[CRC32_TABLE_SIZE] = {};
+
 int main(int argc, char* argv[]) {
 	clock_t start_t = clock();
 
@@ -10,11 +12,10 @@ int main(int argc, char* argv[]) {
 		return HASHTABLE_NO_ERROR;
 	}
 
-	hash_t crc32_table[CRC32_TABLE_SIZE] = {};
-	crc32_gentable(crc32_table);
+	crc32HashGentable(crc32_table);
 
 	Buffer buffer = {};
-	Bucket_t buckets = {.table = crc32_table};
+	Bucket_t buckets = {};
 
 	BUFFER_CTOR(&buffer);
 	BUCKETS_CTOR(&buffer, &buckets);
