@@ -1,11 +1,13 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 data = pd.read_csv('data.dat', sep=' ')
+plt.figure(figsize=(20, 10))
+plt.grid(True, linestyle="--", alpha=0.5)
+plt.fill_between(data['x'], data['y'], color="blue")
 plt.plot(data['x'], data['y'], 'b-', label='Data')
 plt.xlabel('Bucket number')
 plt.ylabel('Bucket size')
 plt.title('Buckets dump')
-plt.grid(True)
 plt.legend()
 plt.savefig('DJB2.svg', dpi=300)
 plt.show()
