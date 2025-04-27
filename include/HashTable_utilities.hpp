@@ -30,6 +30,8 @@
 #define BLUE(str)		"\033[34;1m" str "\033[0m"
 #define TEAL(str)		"\033[36;1m" str "\033[0m"
 
+const int ALIGNMENT_COUNT = 32;
+
 #define DATA_FILE_REWORK() {					 \
 	ht_status = DataFileRework();				\
 	HASHTABLE_ERROR_CHECK(ht_status);			\
@@ -66,4 +68,5 @@ enum HashTableStatusCode {
 };
 
 const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status);
+HashTableStatusCode ReadFromInputFile(char* buffer, size_t buf_size);
 HashTableStatusCode DataFileRework();

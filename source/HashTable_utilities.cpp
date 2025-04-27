@@ -15,14 +15,7 @@ const wchar_t* HashTableErrorsMessenger(HashTableStatusCode status) {
 	}
 }
 
-HashTableStatusCode DataFileRework() {
-	struct stat file_stat = {};
-	stat(_FILE_INPUT, &file_stat);
-	size_t buf_size = (size_t)file_stat.st_size;
-
-	char* buffer = (char*)calloc(buf_size, sizeof(buffer[0]));
-	if (!buffer)
-		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
+HashTableStatusCode ReadFromInputFile(char* buffer, size_t buf_size) {
 
 	FILE* input = fopen(_FILE_INPUT, "r");
 	if (!input)
@@ -34,6 +27,24 @@ HashTableStatusCode DataFileRework() {
 	if (fclose(input))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
+	return HASHTABLE_NO_ERROR;
+}
+
+HashTableStatusCode DataFileRework() {
+
+	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
+
+	struct stat file_stat = {};
+	stat(_FILE_INPUT, &file_stat);
+	size_t buf_size = (size_t)file_stat.st_size;
+
+	char* buffer = (char*)calloc(buf_size, sizeof(buffer[0]));
+	if (!buffer)
+		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
+
+	ht_status = ReadFromInputFile(buffer, buf_size);
+	HASHTABLE_ERROR_CHECK(ht_status);
+
 	FILE* output = fopen(_FILE_REWORK, "w");
 	if (!output)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
@@ -43,12 +54,17 @@ HashTableStatusCode DataFileRework() {
 		while ((isdigit(buffer[end_index]) || isalpha(buffer[end_index]) || buffer[end_index] == '-')) end_index++;
 		if (end_index == start_index) { start_index = ++end_index; continue; }
 		buffer[end_index] = '\0';
-		fprintf(output, "%s\n", buffer + start_index);
+		fprintf(output, "%*s\n", ALIGNMENT_COUNT, buffer + start_index);
 		start_index = ++end_index;
 	}
 
 	if (fclose(output))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
+
+	if (buffer) {
+		free(buffer);
+		buffer = NULL;
+	}
 
 	return HASHTABLE_NO_ERROR;
 }
