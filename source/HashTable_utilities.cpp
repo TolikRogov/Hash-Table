@@ -54,7 +54,7 @@ HashTableStatusCode DataFileRework() {
 		while ((isdigit(buffer[end_index]) || isalpha(buffer[end_index]) || buffer[end_index] == '-')) end_index++;
 		if (end_index == start_index) { start_index = ++end_index; continue; }
 		buffer[end_index] = '\0';
-		fprintf(output, "%*s\n", ALIGNMENT_COUNT, buffer + start_index);
+		fprintf(output, "%s%*s\n", buffer + start_index, ALIGNMENT_COUNT - (int)(end_index - start_index) - 1, "\0");
 		start_index = ++end_index;
 	}
 

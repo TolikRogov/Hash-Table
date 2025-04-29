@@ -15,7 +15,8 @@ enum HashFunction {
 	HASH_DJB2,
 };
 
-const wchar_t* GetHashFunctionName(HashFunction hash_func_name);
+const char* GetHashFunctionName(HashFunction hash_func_name);
+const char* GetHashFunctionDataFileName(HashFunction hash_func_num);
 
 HashTableStatusCode crc32HashGentable(hash_t* table);
 hash_t crc32Hash(const void* bytes, const size_t size_in_bytes);

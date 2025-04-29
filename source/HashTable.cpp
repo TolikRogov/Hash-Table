@@ -58,7 +58,6 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
 	char* word = NULL;
-
 	for (size_t i = 0; i < buffer->words_cnt; i++) {
 		List_t* list = FindListForWord(buffer, buckets, &word);
 		LIST_ADD(list, word);
@@ -101,13 +100,14 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 		LIST_PRINT((buckets->lists + i));
 	}
 
-	FILE* dump = fopen(_DIR_DUMP _FILE_DUMP, "w");
+	FILE* dump = fopen(_FILE_DUMP, "w");
 	if (!dump)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
+	const char* hash_func_name = GetHashFunctionName(buckets->hash_func_num);
 	fprintf(dump, "import pandas as pd\n"
 				  "import matplotlib.pyplot as plt\n"
-				  "data = pd.read_csv('%s', sep=' ')\n"
+				  "data = pd.read_csv('%s%s.%s', sep=' ')\n"
 				  "plt.figure(figsize=(20, 10))\n"
 				  "plt.grid(True, linestyle=\"--\", alpha=0.5)\n"
 				  "plt.fill_between(data['x'], data['y'], color=\"blue\")\n"
@@ -116,13 +116,15 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 				  "plt.ylabel('Bucket size')\n"
 				  "plt.title('Buckets dump')\n"
 			      "plt.legend()\n"
-				  "plt.savefig('%ls.svg', dpi=300)\n"
-				  "plt.show()\n", _FILE_DATA, GetHashFunctionName(buckets->hash_func_num));
+				  "plt.savefig('%s%s.%s', dpi=300)\n"
+				  "plt.show()\n",
+				  _DIR_DUMP_DATA, hash_func_name, _FILE_DATA_FORMAT,
+				  _DIR_DUMP_IMG, hash_func_name, _IMG_DUMP_FORMAT);
 
 	if (fclose(dump))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
-	FILE* data = fopen(_DIR_DUMP _FILE_DATA, "w");
+	FILE* data = fopen(GetHashFunctionDataFileName(buckets->hash_func_num), "w");
 	if (!data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
@@ -133,7 +135,7 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 	if (fclose(data))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
-	if (system("cd " _DIR_DUMP "; python3 " _FILE_DUMP "; cd ../") == -1)
+	if (system("python3 " _FILE_DUMP) == -1)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_SYSTEM_SHELL_ERROR);
 
 	return HASHTABLE_NO_ERROR;

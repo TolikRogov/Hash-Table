@@ -8,15 +8,22 @@
 #include <time.h>
 #include <limits.h>
 #include <nmmintrin.h>
+#include <immintrin.h>
 #include <stdint.h>
 
-#define _DIR_DUMP		"Dump/"
-#define _FILE_DUMP		"dump.py"
-#define _FILE_DATA		"data.dat"
+#define _DIR_IMG					"img/"
+#define _DIR_DATA 					"data/"
 
-#define _DIR_DATA 		"data/"
-#define _FILE_INPUT 	_DIR_DATA "input.txt"
-#define _FILE_REWORK 	_DIR_DATA "rework.txt"
+#define _DIR_DUMP					"Dump/"
+#define _FILE_DUMP					_DIR_DUMP "dump.py"
+#define _DIR_DUMP_DATA				_DIR_DUMP _DIR_DATA
+#define _DIR_DUMP_IMG				_DIR_DUMP _DIR_IMG
+
+#define _FILE_DATA_FORMAT			"dat"
+#define _IMG_DUMP_FORMAT			"svg"
+
+#define _FILE_INPUT 				_DIR_DATA "input.txt"
+#define _FILE_REWORK 				_DIR_DATA "rework.txt"
 
 #define _REWORK_KEY					"--rework"
 #define _DJB2HASH_KEY				"--djb2"

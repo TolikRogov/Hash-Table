@@ -1,11 +1,20 @@
 #include "HashFunctions.hpp"
 
-const wchar_t* GetHashFunctionName(HashFunction hash_func_num) {
+const char* GetHashFunctionName(HashFunction hash_func_num) {
 	switch (hash_func_num) {
-		case HASH_DJB2:					return L"DJB2";
-		case HASH_CRC32:				return L"CRC32";
-		case HASH_CRC32_INTRINSIC:		return L"CRC32Intrinsic";
-		default: 						return L"Undefined function";
+		case HASH_DJB2:					return "DJB2";
+		case HASH_CRC32:				return "CRC32";
+		case HASH_CRC32_INTRINSIC:		return "CRC32Intrinsic";
+		default: 						return "Undefined function";
+	}
+}
+
+const char* GetHashFunctionDataFileName(HashFunction hash_func_num) {
+	switch (hash_func_num) {
+		case HASH_DJB2:					return _DIR_DUMP_DATA "DJB2."  		 _FILE_DATA_FORMAT;
+		case HASH_CRC32:				return _DIR_DUMP_DATA "CRC32." 		 _FILE_DATA_FORMAT;
+		case HASH_CRC32_INTRINSIC:		return _DIR_DUMP_DATA "CRC32Intrinsic." _FILE_DATA_FORMAT;
+		default: 						return "Undefined function";
 	}
 }
 
