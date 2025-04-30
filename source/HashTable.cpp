@@ -20,11 +20,18 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
 	for (size_t i = 0; i < buffer->size; i++) {
+#ifdef BASE
+		if (buffer->data[i] == '\n') {
+			buffer->data[i] = '\0';
+			buffer->words_cnt++;
+		}
+#else
 		if (buffer->data[i] == ' ') {
 			buffer->data[i++] = '\0';
 			while (i < buffer->size && (buffer->data[i] == ' ' || buffer->data[i] == '\n')) {buffer->data[i++] = '\0';}
 			buffer->words_cnt++;
 		}
+#endif
 	}
 
 	return HASHTABLE_NO_ERROR;
@@ -49,7 +56,12 @@ List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 	*word = buffer->data + buffer->shift;
 	size_t length = strlen(*word);
 	buffer->shift += length;
+
+#ifdef BASE
+	buffer->shift++;
+#else
 	while (buffer->shift < buffer->size && buffer->data[buffer->shift] == '\0') buffer->shift++;
+#endif
 
 	size_t hash = buckets->hash_function(*word, length);
 	return buckets->lists + (hash % buckets->size);
@@ -84,7 +96,7 @@ HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 			List_t* list = FindListForWord(buffer, buckets, &word);
 			Data_t* found = ListFindElement(list->head, word);
 			if (!found)
-				printf(RED("%s was not found")"\n", word);
+				printf(RED("'%s' was not found")"\n", word);
 		}
 
 		buffer->shift = 0;

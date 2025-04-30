@@ -6,5 +6,6 @@
 
 cmake -S ./ -B build/Debug -DCMAKE_BUILD_TYPE=Debug
 cmake --build build/Debug
-#valgrind --tool=callgrind ./build/Debug/HashTable --crc32_intrinsic
-./build/Debug/HashTable --crc32_intrinsic
+# valgrind --tool=callgrind ./build/Debug/HashTable --crc32
+# perf record -F 99 -g ./build/Debug/HashTable --crc32
+./build/Debug/HashTable --crc32
