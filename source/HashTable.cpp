@@ -5,7 +5,7 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	stat(_FILE_REWORK, &file_stat);
 	buffer->size = (size_t)file_stat.st_size;
 
-	buffer->data = (char*)calloc(buffer->size, sizeof(char));
+	buffer->data = (char*)aligned_alloc(ALIGNMENT_COUNT, buffer->size * sizeof(char));
 	if (!buffer->data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
@@ -20,8 +20,9 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
 	for (size_t i = 0; i < buffer->size; i++) {
-		if (buffer->data[i] == '\n') {
-			buffer->data[i] = '\0';
+		if (buffer->data[i] == ' ') {
+			buffer->data[i++] = '\0';
+			while (i < buffer->size && (buffer->data[i] == ' ' || buffer->data[i] == '\n')) {buffer->data[i++] = '\0';}
 			buffer->words_cnt++;
 		}
 	}
@@ -47,7 +48,8 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 	*word = buffer->data + buffer->shift;
 	size_t length = strlen(*word);
-	buffer->shift += length + 1;
+	buffer->shift += length;
+	while (buffer->shift < buffer->size && buffer->data[buffer->shift] == '\0') buffer->shift++;
 
 	size_t hash = buckets->hash_function(*word, length);
 	return buckets->lists + (hash % buckets->size);

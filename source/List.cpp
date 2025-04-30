@@ -76,16 +76,11 @@ Data_t* ListFindElement(Data_t* data, char* word) {
 	if (!data)
 		return NULL;
 
-	// printf("word: %s, address: %p\n", data->data->word, data->data->word);
-	// printf("word: %s, address: %p\n", word, word);
-
 #ifdef BASE
 	if (!strcmp(data->data->word, word))
 		return data;
 #else
-	__m256* data_word = (__m256*)data->data->word;
-	__m256* finding_word = (__m256*)word;
-	if (_mm256_movemask_ps(_mm256_cmp_ps(*data_word, *finding_word, _CMP_EQ_OQ)))
+	if (_mm256_movemask_epi8(_mm256_cmpeq_epi64(*(__m256i*)data->data->word, *(__m256i*)word)) == -1)
 		return data;
 #endif
 
