@@ -19,21 +19,23 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	if (fclose(rework))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
-	for (size_t i = 0; i < buffer->size; i++) {
 #ifdef BASE
-		if (buffer->data[i] == '\n') {
+	#define _END_SYMBOL '\n'
+#else
+	#define _END_SYMBOL ' '
+#endif
+
+	for (size_t i = 0; i < buffer->size; i++) {
+		if (buffer->data[i] == _END_SYMBOL) {
 			buffer->data[i] = '\0';
 			buffer->words_cnt++;
-		}
-#else
-		if (buffer->data[i] == ' ') {
-			buffer->data[i++] = '\0';
-			while (i < buffer->size && (buffer->data[i] == ' ' || buffer->data[i] == '\n')) {buffer->data[i++] = '\0';}
-			buffer->words_cnt++;
-		}
+#ifndef BASE
+			i = ALIGNMENT_COUNT * (buffer->words_cnt + 1) - 1;
 #endif
+		}
 	}
 
+#undef _END_SYMBOL
 	return HASHTABLE_NO_ERROR;
 }
 
@@ -55,12 +57,11 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 	*word = buffer->data + buffer->shift;
 	size_t length = strlen(*word);
-	buffer->shift += length;
 
 #ifdef BASE
-	buffer->shift++;
+	buffer->shift += length + 1;
 #else
-	while (buffer->shift < buffer->size && buffer->data[buffer->shift] == '\0') buffer->shift++;
+	buffer->shift += ALIGNMENT_COUNT;
 #endif
 
 	size_t hash = buckets->hash_function(*word, length);
