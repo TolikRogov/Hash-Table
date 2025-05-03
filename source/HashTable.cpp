@@ -43,7 +43,7 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
-	buckets->size = AMOUNT_UNIQUE_WORDS / LOAD_FACTOR;
+	buckets->size = OPTIMIZE_BUCKETS_SIZE;
 	buckets->lists = (List_t*)calloc(buckets->size, sizeof(List_t));
 	if (!buckets->lists)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
@@ -57,15 +57,21 @@ HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
 List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 	*word = buffer->data + buffer->shift;
 	size_t length = strlen(*word);
+	size_t hash = buckets->hash_function(*word, length);
 
 #ifdef BASE
 	buffer->shift += length + 1;
+	hash %= buckets->size;
 #else
 	buffer->shift += ALIGNMENT_COUNT;
+	asm ("mov %1, %%rdi\n"
+		 "and %2, %%rdi\n"
+		 "mov %%rdi, %0"
+		 : "=r" (hash)
+		 : "r"  (hash), "r" (OPTIMIZE_BUCKETS_SIZE - 1)
+		 : "%rdi");
 #endif
-
-	size_t hash = buckets->hash_function(*word, length);
-	return buckets->lists + (hash % buckets->size);
+	return buckets->lists + hash;
 }
 
 HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
