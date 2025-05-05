@@ -1,5 +1,7 @@
 #include "HashTable.hpp"
 
+hash_t crc32_table[CRC32_TABLE_SIZE] = {};
+
 HashTableStatusCode BufferCtor(Buffer* buffer) {
 	struct stat file_stat = {};
 	stat(_FILE_REWORK, &file_stat);
@@ -39,7 +41,7 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	return HASHTABLE_NO_ERROR;
 }
 
-HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets) {
+HashTableStatusCode BucketsCtor(Bucket_t* buckets) {
 
 	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
 
@@ -95,6 +97,8 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 
 HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 
+	clock_t start_t = clock();
+
 	for (size_t n = 0; n < FINDER_ITERATIONS; n++) {
 
 		char* word = NULL;
@@ -108,6 +112,8 @@ HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 
 		buffer->shift = 0;
 	}
+
+	printf("PROGRAM TIME: %lg sec\n", (double)(clock() - start_t) / CLOCKS_PER_SEC);
 
 	return HASHTABLE_NO_ERROR;
 }
@@ -190,6 +196,37 @@ HashTableStatusCode BufferDtor(Buffer* buffer) {
 		free(buffer->data);
 		buffer->data = NULL;
 	}
+
+	return HASHTABLE_NO_ERROR;
+}
+
+HashTableStatusCode ChooseHashFunction(const char* cmd_key, Bucket_t* buckets) {
+
+	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
+
+	if (!strcmp(cmd_key, _REWORK_KEY)) {
+		DATA_FILE_REWORK();
+		return HASHTABLE_NO_ERROR;
+	}
+	if (!strcmp(cmd_key, _DJB2HASH_KEY)) {
+		buckets->hash_function = DJB2Hash;
+		buckets->hash_func_num = HASH_DJB2;
+	}
+	else if (!strcmp(cmd_key, _CRC32HASH_KEY)) {
+		crc32HashGentable(crc32_table);
+		buckets->hash_function = crc32Hash;
+		buckets->hash_func_num = HASH_CRC32;
+	}
+	else if (!strcmp(cmd_key, _CRC32_INTRINSIC_HASH_KEY)) {
+		buckets->hash_function = crc32IntrinsicHash;
+		buckets->hash_func_num = HASH_CRC32_INTRINSIC;
+	}
+	else if (!strcmp(cmd_key, _CRC32_ASM_HASH_KEY)) {
+		buckets->hash_function = crc32Asm;
+		buckets->hash_func_num = HASH_CRC32_ASM;
+	}
+	else
+		HASHTABLE_ERROR_CHECK(HASHTABLE_COMPILE_KEYS_ERROR);
 
 	return HASHTABLE_NO_ERROR;
 }

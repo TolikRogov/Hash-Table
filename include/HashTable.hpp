@@ -8,8 +8,8 @@ const size_t LOAD_FACTOR 			= 15;
 const size_t FINDER_ITERATIONS 		= 700;
 const size_t OPTIMIZE_BUCKETS_SIZE  = 1024;
 
-#define BUCKETS_CTOR(buffer, buckets) {						\
-	ht_status = BucketsCtor(buffer, buckets);				\
+#define BUCKETS_CTOR(buckets) {								\
+	ht_status = BucketsCtor(buckets);						\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
@@ -38,6 +38,11 @@ const size_t OPTIMIZE_BUCKETS_SIZE  = 1024;
 	HASHTABLE_ERROR_CHECK(ht_status);						\
 }															\
 
+#define CHOOSE_HASH_FUNCTION(cmd_key, buckets) {		    \
+	ht_status = ChooseHashFunction(cmd_key, buckets);	    \
+	HASHTABLE_ERROR_CHECK(ht_status);						\
+}															\
+
 struct Bucket_t {
 	size_t size;
 	List_t* lists;
@@ -55,7 +60,7 @@ struct Buffer {
 HashTableStatusCode BufferCtor(Buffer* buffer);
 HashTableStatusCode BufferDtor(Buffer* buffer);
 
-HashTableStatusCode BucketsCtor(Buffer* buffer, Bucket_t* buckets);
+HashTableStatusCode BucketsCtor(Bucket_t* buckets);
 HashTableStatusCode BucketsDtor(Bucket_t* buckets);
 
 List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word);
@@ -63,3 +68,5 @@ HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets);
 HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets);
 
 HashTableStatusCode BucketsDump(Bucket_t* buckets);
+
+HashTableStatusCode ChooseHashFunction(const char* cmd_key, Bucket_t* buckets);
