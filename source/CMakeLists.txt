@@ -4,4 +4,5 @@ target_sources(${PROJECT_NAME}
 	${CMAKE_CURRENT_SOURCE_DIR}/HashTable.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/HashTable_utilities.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/HashFunctions.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/crc32Asm.asm
 )

@@ -29,6 +29,7 @@
 #define _DJB2HASH_KEY				"--djb2"
 #define _CRC32HASH_KEY				"--crc32"
 #define _CRC32_INTRINSIC_HASH_KEY	"--crc32_intrinsic"
+#define _CRC32_ASM_HASH_KEY			"--crc32_asm"
 
 #define _LINE			"----------------------------------------"
 #define RED(str) 		"\033[31;1m" str "\033[0m"

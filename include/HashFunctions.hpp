@@ -13,7 +13,10 @@ enum HashFunction {
 	HASH_CRC32,
 	HASH_CRC32_INTRINSIC,
 	HASH_DJB2,
+	HASH_CRC32_ASM,
 };
+
+extern "C" hash_t crc32Asm(const void*, const size_t);
 
 const char* GetHashFunctionName(HashFunction hash_func_name);
 const char* GetHashFunctionDataFileName(HashFunction hash_func_num);

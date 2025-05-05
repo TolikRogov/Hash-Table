@@ -30,6 +30,10 @@ int main(int argc, char* argv[]) {
 		buckets.hash_function = crc32IntrinsicHash;
 		buckets.hash_func_num = HASH_CRC32_INTRINSIC;
 	}
+	else if (!strcmp(argv[1], _CRC32_ASM_HASH_KEY)) {
+		buckets.hash_function = crc32Asm;
+		buckets.hash_func_num = HASH_CRC32_ASM;
+	}
 	else
 		HASHTABLE_ERROR_CHECK(HASHTABLE_COMPILE_KEYS_ERROR);
 
