@@ -4,16 +4,16 @@
 #cmake --build build/Release
 #./build/Release/HashTable
 
+cmake -S ./ -B build/Debug -DCMAKE_BUILD_TYPE=Debug
+cmake --build build/Debug
+./build/Debug/HashTable --crc32_asm
+
+# valgrind --tool=callgrind ./build/Debug/HashTable --crc32_asm
+# perf record -F 99 -g ./build/Debug/HashTable --crc32_asm
+
 # nasm -f elf64 source/crc32Asm.asm -o build/crc32Asm.o -l build/crc32Asm.lst
 # g++ -static -O3 -mavx2 source/main.cpp source/HashFunctions.cpp build/crc32Asm.o -o build/HashTable -z noexecstack -I include/
 # ./build/HashTable
 
-# valgrind --tool=callgrind ./build/Debug/HashTable --crc32_intrinsic
-# perf record -F 99 -g ./build/Debug/HashTable --crc32_intrinsic
-
 # g++ -S -c -O3 -mavx2 source/HashFunctions.cpp -I include/
 # objdump -D -M intel build/Debug/HashTable
-
-cmake -S ./ -B build/Debug -DCMAKE_BUILD_TYPE=Debug
-cmake --build build/Debug
-./build/Debug/HashTable --crc32_asm
