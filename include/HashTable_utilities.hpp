@@ -31,6 +31,12 @@
 #define _CRC32_INTRINSIC_HASH_KEY	"--crc32_intrinsic"
 #define _CRC32_ASM_HASH_KEY			"--crc32_asm"
 
+#ifdef BASE
+	#define _END_SYMBOL '\n'
+#else
+	#define _END_SYMBOL ' '
+#endif
+
 #define _LINE			"----------------------------------------"
 #define RED(str) 		"\033[31;1m" str "\033[0m"
 #define YELLOW(str) 	"\033[33;4m" str "\033[0m"

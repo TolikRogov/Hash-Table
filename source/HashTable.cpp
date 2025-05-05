@@ -21,23 +21,16 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	if (fclose(rework))
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
-#ifdef BASE
-	#define _END_SYMBOL '\n'
-#else
-	#define _END_SYMBOL ' '
-#endif
-
 	for (size_t i = 0; i < buffer->size; i++) {
 		if (buffer->data[i] == _END_SYMBOL) {
 			buffer->data[i] = '\0';
 			buffer->words_cnt++;
-#ifndef BASE
-			i = ALIGNMENT_COUNT * (buffer->words_cnt + 1) - 1;
-#endif
+			#ifndef BASE
+				i = ALIGNMENT_COUNT * (buffer->words_cnt + 1) - 1;
+			#endif
 		}
 	}
 
-#undef _END_SYMBOL
 	return HASHTABLE_NO_ERROR;
 }
 
