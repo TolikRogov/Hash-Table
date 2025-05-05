@@ -19,7 +19,7 @@
 #define _DIR_DUMP_DATA				_DIR_DUMP _DIR_DATA
 #define _DIR_DUMP_IMG				_DIR_DUMP _DIR_IMG
 
-#define _FILE_DATA_FORMAT			".dat"
+#define _FILE_DATA_FORMAT			"dat"
 #define _IMG_DUMP_FORMAT			"svg"
 
 #define _FILE_INPUT 				_DIR_DATA "input.txt"

@@ -12,10 +12,10 @@ const char* GetHashFunctionName(HashFunction hash_func_num) {
 
 const char* GetHashFunctionDataFileName(HashFunction hash_func_num) {
 	switch (hash_func_num) {
-		case HASH_DJB2:					return _DIR_DUMP_DATA "DJB2"  		 	_FILE_DATA_FORMAT;
-		case HASH_CRC32:				return _DIR_DUMP_DATA "CRC32" 		 	_FILE_DATA_FORMAT;
-		case HASH_CRC32_INTRINSIC:		return _DIR_DUMP_DATA "CRC32Intrinsic"  _FILE_DATA_FORMAT;
-		case HASH_CRC32_ASM:			return _DIR_DUMP_DATA "CRC32ASM"		_FILE_DATA_FORMAT;
+		case HASH_DJB2:					return _DIR_DUMP_DATA "DJB2."  		 	 _FILE_DATA_FORMAT;
+		case HASH_CRC32:				return _DIR_DUMP_DATA "CRC32." 		 	 _FILE_DATA_FORMAT;
+		case HASH_CRC32_INTRINSIC:		return _DIR_DUMP_DATA "CRC32Intrinsic."  _FILE_DATA_FORMAT;
+		case HASH_CRC32_ASM:			return _DIR_DUMP_DATA "CRC32ASM."		 _FILE_DATA_FORMAT;
 		default: 						return NULL;
 	}
 }
