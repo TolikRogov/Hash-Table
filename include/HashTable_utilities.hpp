@@ -23,10 +23,13 @@
 #define _IMG_DUMP_FORMAT			"svg"
 
 #define _FILE_INPUT 				_DIR_DATA "input.txt"
-#define _FILE_REWORK 				_DIR_DATA "rework.txt"
+#define _FILE_BASE_REWORK 			_DIR_DATA "rework_base.txt"
+#define _FILE_REWORK				_DIR_DATA "rework.txt"
 
 #define _REWORK_KEY					"--rework"
-#define _DJB2HASH_KEY				"--djb2"
+#define _STRLEN_HASH_KEY			"--strlen"
+#define _ASCIIsum_HASH_KEY			"--ASCIIsum"
+#define _MURMUR1_HASH_KEY			"--murmur1"
 #define _CRC32HASH_KEY				"--crc32"
 #define _CRC32_INTRINSIC_HASH_KEY	"--crc32_intrinsic"
 #define _CRC32_ASM_HASH_KEY			"--crc32_asm"

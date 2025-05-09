@@ -7,6 +7,11 @@ int main(int argc, char* argv[]) {
 	if (argc < 2)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_COMPILE_KEYS_ERROR);
 
+	if (!strcmp(argv[1], _REWORK_KEY)) {
+		DATA_FILE_REWORK();
+		return HASHTABLE_NO_ERROR;
+	}
+
 	Buffer buffer = {};
 	Bucket_t buckets = {};
 

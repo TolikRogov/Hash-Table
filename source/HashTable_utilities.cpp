@@ -45,7 +45,11 @@ HashTableStatusCode DataFileRework() {
 	ht_status = ReadFromInputFile(buffer, buf_size);
 	HASHTABLE_ERROR_CHECK(ht_status);
 
+#ifdef BASE
+	FILE* output = fopen(_FILE_BASE_REWORK, "w");
+#else
 	FILE* output = fopen(_FILE_REWORK, "w");
+#endif
 	if (!output)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 

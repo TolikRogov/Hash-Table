@@ -7,11 +7,15 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	stat(_FILE_REWORK, &file_stat);
 	buffer->size = (size_t)file_stat.st_size;
 
-	buffer->data = (char*)aligned_alloc(ALIGNMENT_COUNT, buffer->size * sizeof(char));
+	buffer->data = (char*)aligned_alloc(ALIGNMENT_COUNT, (buffer->size + ALIGNMENT_COUNT - (buffer->size % ALIGNMENT_COUNT)) * sizeof(char));
 	if (!buffer->data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
+#ifdef BASE
+	FILE* rework = fopen(_FILE_BASE_REWORK, "r");
+#else
 	FILE* rework = fopen(_FILE_REWORK, "r");
+#endif
 	if (!rework)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
@@ -127,18 +131,21 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 	const char* hash_func_name = GetHashFunctionName(buckets->hash_func_num);
 	fprintf(dump, "import pandas as pd\n"
 				  "import matplotlib.pyplot as plt\n"
+				  "import numpy as np\n"
 				  "data = pd.read_csv('%s%s.%s', sep=' ')\n"
 				  "fig = plt.figure(figsize=(20, 10))\n"
 				  "ax = fig.add_subplot()\n"
 				  "ax.patch.set_facecolor('#addaed')\n"
 				  "ax.patch.set_alpha(0.2)\n"
 				  "ax.bar(data['x'], data['y'], width = 2, color = '#82b2fa')\n"
-				  "ax.set_title('Buckets dump')\n"
+				  "ax.set_title('%s dump')\n"
 				  "ax.set_xlabel('Bucket number')\n"
 			      "ax.set_ylabel('Bucket size')\n"
+				  "fig.text(0.11, 0.05, f\"Dispersion: {np.var(data['y']):.2f}\")\n"
 				  "plt.savefig('%s%s.%s', dpi=300)\n"
 				  "plt.show()\n",
 				  _DIR_DUMP_DATA, hash_func_name, _FILE_DATA_FORMAT,
+				  hash_func_name,
 				  _DIR_DUMP_IMG, hash_func_name, _IMG_DUMP_FORMAT);
 
 	if (fclose(dump))
@@ -195,20 +202,22 @@ HashTableStatusCode BufferDtor(Buffer* buffer) {
 
 HashTableStatusCode ChooseHashFunction(const char* cmd_key, Bucket_t* buckets) {
 
-	HashTableStatusCode ht_status = HASHTABLE_NO_ERROR;
-
-	if (!strcmp(cmd_key, _REWORK_KEY)) {
-		DATA_FILE_REWORK();
-		return HASHTABLE_NO_ERROR;
-	}
-	if (!strcmp(cmd_key, _DJB2HASH_KEY)) {
-		buckets->hash_function = DJB2Hash;
-		buckets->hash_func_num = HASH_DJB2;
-	}
-	else if (!strcmp(cmd_key, _CRC32HASH_KEY)) {
+	if (!strcmp(cmd_key, _CRC32HASH_KEY)) {
 		crc32HashGentable(crc32_table);
 		buckets->hash_function = crc32Hash;
 		buckets->hash_func_num = HASH_CRC32;
+	}
+	else if (!strcmp(cmd_key, _STRLEN_HASH_KEY)) {
+		buckets->hash_function = StrlenHash;
+		buckets->hash_func_num = HASH_STRLEN;
+	}
+	else if (!strcmp(cmd_key, _MURMUR1_HASH_KEY)) {
+		buckets->hash_function = MurMur1Hash;
+		buckets->hash_func_num = HASH_MURMUR1;
+	}
+	else if (!strcmp(cmd_key, _ASCIIsum_HASH_KEY)) {
+		buckets->hash_function = ASCIIsumHash;
+		buckets->hash_func_num = HASH_ASCIIsum;
 	}
 	else if (!strcmp(cmd_key, _CRC32_INTRINSIC_HASH_KEY)) {
 		buckets->hash_function = crc32IntrinsicHash;
