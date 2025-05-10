@@ -1,5 +1,6 @@
 ![GitHub repo size](https://img.shields.io/github/repo-size/TolikRogov/Hash-Table)
 ![GitHub Repo stars](https://img.shields.io/github/stars/TolikRogov/Hash-Table)
+![GitHub top language](https://img.shields.io/github/languages/top/TolikRogov/Hash-Table)
 
 # Hash Table
 
