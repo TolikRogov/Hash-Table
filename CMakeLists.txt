@@ -19,7 +19,7 @@ set(DEBUG_FLAGS -D DEBUG -std=c++17 -O3 -z noexecstack -mavx2 -ggdb3 -Wall -Wext
 -Wno-narrowing -Wno-old-style-cast -Wno-varargs -Wno-unused-parameter -Wstack-protector -fcheck-new -fsized-deallocation -fstack-protector -fstrict-overflow -fPIC -fPIE -fno-omit-frame-pointer
 -fPIE -Werror=vla -Wno-write-strings -fsanitize=address,bool,bounds,enum,float-cast-overflow,float-divide-by-zero,integer-divide-by-zero,nonnull-attribute,null,return,returns-nonnull-attribute,shift,signed-integer-overflow,undefined,unreachable,vla-bound,vptr)
 
-set(RELEASE_FLAGS -D NDEBUG -std=c++17 -z noexecstack -mavx2 -Wall -Wextra -Wno-implicit-fallthrough -Wno-unused-parameter)
+set(RELEASE_FLAGS -D NDEBUG -std=c++17 -O3 -z noexecstack -mavx2 -Wall -Wextra -Wno-implicit-fallthrough -Wno-unused-parameter)
 
 add_executable(${PROJECT_NAME})
 add_subdirectory(source)

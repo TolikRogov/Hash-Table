@@ -1,7 +1,6 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/TolikRogov/Hash-Table)
 ![GitHub repo size](https://img.shields.io/github/repo-size/TolikRogov/Hash-Table)
 ![GitHub Repo stars](https://img.shields.io/github/stars/TolikRogov/Hash-Table)
-![GitHub code search count](https://img.shields.io/github/search)
 ![GitHub top language](https://img.shields.io/github/languages/top/TolikRogov/Hash-Table)
 
 # Hash Table
