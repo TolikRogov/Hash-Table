@@ -23,8 +23,12 @@
 #define _IMG_DUMP_FORMAT			"svg"
 
 #define _FILE_INPUT 				_DIR_DATA "input.txt"
-#define _FILE_BASE_REWORK 			_DIR_DATA "rework_base.txt"
-#define _FILE_REWORK				_DIR_DATA "rework.txt"
+
+#ifdef BASE
+	#define _FILE_REWORK				_DIR_DATA "rework_base.txt"
+#else
+	#define _FILE_REWORK				_DIR_DATA "rework.txt"
+#endif
 
 #define _REWORK_KEY					"--rework"
 #define _STRLEN_HASH_KEY			"--strlen"

@@ -13,7 +13,7 @@ const char* GetHashFunctionName(HashFunction hash_func_num) {
 }
 
 hash_t StrlenHash(const void* bytes, const size_t size_in_bytes) {
-	return size_in_bytes;
+	return (hash_t)size_in_bytes;
 }
 
 hash_t MurMur1Hash(const void* bytes, const size_t size_in_bytes) {

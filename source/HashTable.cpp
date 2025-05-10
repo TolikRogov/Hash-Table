@@ -11,11 +11,7 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	if (!buffer->data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
-#ifdef BASE
-	FILE* rework = fopen(_FILE_BASE_REWORK, "r");
-#else
 	FILE* rework = fopen(_FILE_REWORK, "r");
-#endif
 	if (!rework)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
@@ -110,7 +106,7 @@ HashTableStatusCode BucketsFinder(Buffer* buffer, Bucket_t* buckets) {
 		buffer->shift = 0;
 	}
 
-	printf("PROGRAM TIME: %lg sec\n", (double)(clock() - start_t) / CLOCKS_PER_SEC);
+	printf("FINDER TIME: %lg sec\n", (double)(clock() - start_t) / CLOCKS_PER_SEC);
 
 	return HASHTABLE_NO_ERROR;
 }
