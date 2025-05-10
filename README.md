@@ -91,17 +91,99 @@ $$Load \space factor = \frac{Количество \space объектов \space
     <img src="Dump/img/Strlen.svg" alt="Strlen hash" width="1000">
 </figure>
 
+<details style="text-align: center;">
+    <summary>hash_t StrlenHash</summary>
+
+    hash_t StrlenHash(const void* bytes, const size_t size_in_bytes) {
+        return (hash_t)size_in_bytes;
+    }
+
+</details>
+
 <figure style="text-align: center;">
     <img src="Dump/img/ASCIIsum.svg" alt="ASCIIsum hash" width="1000">
 </figure>
+
+<details style="text-align: center;">
+    <summary>hash_t ASCIIsumHash</summary>
+
+    hash_t ASCIIsumHash(const void* bytes, const size_t size_in_bytes) {
+
+        hash_t hash = 0;
+        const u_char* byte = (const u_char*)bytes;
+
+        for (size_t i = 0; i < size_in_bytes; i++)
+            hash += *byte++;
+
+        return hash;
+    }
+
+</details>
 
 <figure style="text-align: center;">
     <img src="Dump/img/MURMUR1.svg" alt="MurMur1 hash" width="1000">
 </figure>
 
+<details style="text-align: center;">
+    <summary>hash_t MurMur1Hash</summary>
+
+    hash_t MurMur1Hash(const void* bytes, const size_t size_in_bytes) {
+
+        hash_t hash = MURMUR1_SEED ^ ((hash_t)size_in_bytes * MURMUR1_CONST);
+        const u_char* data = (const u_char*)bytes;
+
+        size_t size = size_in_bytes;
+        while (size >= 4) {
+            u_int32_t k = *(u_int32_t*)data;
+
+            k *= MURMUR1_CONST;
+            k ^= k >> MURMUR1_ROTATION;
+            k *= MURMUR1_CONST;
+
+            hash *= MURMUR1_CONST;
+            hash ^= k;
+
+            data += 4;
+            size -= 4;
+        }
+
+        switch(size) {
+            case 3: hash ^= (hash_t)(data[2] << 16);
+            case 2: hash ^= (hash_t)(data[1] << 8);
+            case 1: hash ^= (hash_t)(data[0]);
+                    hash *= MURMUR1_CONST;
+            default: break;
+        };
+
+        hash ^= hash >> 13;
+        hash *= MURMUR1_CONST;
+        hash ^= hash >> 15;
+
+        return hash;
+    }
+
+</details>
+
 <figure style="text-align: center;">
     <img src="Dump/img/CRC32.svg" alt="CRC32 hash" width="1000">
 </figure>
+
+<details style="text-align: center;">
+    <summary>hash_t crc32Hash</summary>
+
+    hash_t crc32Hash(const void* bytes, const size_t size_in_bytes) {
+
+        hash_t crc = CRC32_INIT_CRC;
+        const u_char* u_byte = (const u_char*)bytes;
+        extern hash_t crc32_table[CRC32_TABLE_SIZE];
+
+        for (size_t i = 0; i < size_in_bytes; i++)
+            crc = (crc >> 8) ^ crc32_table[(crc ^ *(const hash_t*)(u_byte++)) & 0xFF];
+
+        return crc ^ 0xFFFFFFFF;
+    }
+
+</details>
 
 Можно сделать вывод, что среди рассмотренных хэш-функций наиболее случайное распределение имеют `MurMur1 hash` и `CRC32 hash`, но последняя все же имеет наименьшую дисперсию. Именно **_CRC32 hash_** выбрана для хэш-таблицы.
 
@@ -148,25 +230,29 @@ $$Load \space factor = \frac{Количество \space объектов \space
 
 ## Базовая версия
 
-1. **С оптимизацией `-O3`:**
-   | № | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-   | :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-   | t, c | 18,80 | 18,74 | 18,80 | 18,80 | 18,72 | 18,81 | 18,75 | 18,80 | 18,82 | 18,73 |
+**Без оптимизации (-O0):**
+| № | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+| :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| t, c | 21,24 | 21,15 | 21,24 | 21,15 | 21,11 | 21,09 | 21,34 | 21,17 | 21,22 | 21,31 |
 
-   **Статистика**
+**Статистика**
 
-   - Среднее время: `18,77 ± 0,33` с (`1,8` %)
-   - FPS: `16,86 ± 0,16` (`0,96` %)
+- Среднее время: `21,20 ± 0,02` с (`0,1` %)
 
-2. **Без оптимизации:**
-   | № | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
-   | :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-   | t, c | 39,79 | 39,78 | 39,88 | 39,74 | 40,02 | 39,87 | 39,58 | 39,58 | 39,59 | 39,64 |
+<figure style="text-align: center;">
+    <img src="img/perf/perf_base.png" alt="Perf base version" width="1000">
+    <figcaption>Perf base version (-O0)</figcaption>
+</figure>
 
-   **Статистика**
+<figure style="text-align: center;">
+    <img src="img/callgrind/callgrind_base.png" alt="Callgrind base version" width="1000">
+    <figcaption>Callgrind base version (-O0)</figcaption>
+</figure>
 
-   - Среднее время: `39,75 ± 0,71` с (`1,8` %)
-   - FPS: `8,46 ± 0,02` (`0,27` %)
+> [!NOTE]
+> Можем увидеть, что инструменты выдали разный результат по собственному времени выполнения функций. Из подобного анализа мы можем убедиться по функции `crc32Hash` в `Callgrind` в том, что поиск элементов в таблице много превышает загрузку: `372446207` = `700` \* `531307` (Поиск) + `531307` (Загрузка).
+
+Функцию для оптимизации выберем по результатам инструментов из оптимизаций компилятора.
 
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>
 
@@ -174,11 +260,87 @@ $$Load \space factor = \frac{Количество \space объектов \space
 
 ## Версия с оптимизациями компилятора
 
+**С оптимизацией (-O3):**
+| № | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+| :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| t, c | 16,92 | 16,59 | 16,47 | 16,70 | 16,72 | 16,78 | 16,60 | 16,67 | 16,65 | 16,86 |
+
+**Статистика**
+
+- Среднее время: `16,70 ± 0,05` с (`0,3` %)
+
+<figure style="text-align: center;">
+    <img src="img/perf/perf_o3.png" alt="Perf o3 version" width="1000">
+    <figcaption>Perf O3 version</figcaption>
+</figure>
+
+<figure style="text-align: center;">
+    <img src="img/callgrind/callgrind_o3.png" alt="Callgrind o3 version" width="1000">
+    <figcaption>Callgrind O3 version</figcaption>
+</figure>
+
+> [!NOTE]
+> Видим, что наибольшей по времени выполнения является функция `__strcmp_avx2`, следовательно оптимизировать первой будем именно её.
+
+> [!WARNING]
+> По результатам профилировщиков на данный момент нельзя выбрать один из них.
+
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>
 
 ---
 
 ## Оптимизация strcmp
+
+Ускорять функцию сравнения строк будем при помощи одной ассемблерных оптимизаций, а именно **_intrinsic functions_**. Для этого потребуется изменить формат входных данных: каждое слово будет выравнено по 32 байта, если же слово выходит за рамки 32 байт, оно будет пропущено, то есть не попадет в файл, а значит и в таблицу.
+
+<details>
+    <summary>Функция с измененным сравнением выглядит так:</summary>
+
+    Data_t* ListFindElement(Data_t* data, char* word) {
+
+        if (!data)
+            return NULL;
+
+    #ifdef BASE
+        if (!strcmp(data->data->word, word))
+            return data;
+    #else
+        if (_mm256_movemask_epi8(_mm256_cmpeq_epi64(*(__m256i*)data->data->word, *(__m256i*)word)) == -1)
+            return data;
+    #endif
+
+        return ListFindElement(data->next, word);
+    }
+
+</details>
+
+> [!NOTE]
+> Под условной компиляцией оставим возможность вернуться к исходной программе.
+
+**strcmp на intrinsic functions:**
+| № | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 |
+| :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| t, c | 13,60 | 13,73 | 13,60 | 13,72 | 13,70 | 13,76 | 13,76 | 13,61 | 13,64 | 13,60 |
+
+**Статистика**
+
+- Среднее время: `13,670 ± 0,013` с (`0,1` %)
+
+<figure style="text-align: center;">
+    <img src="img/perf/perf_strcmp_int.png" alt="Perf strcmp_int version" width="1000">
+    <figcaption>Perf strcmp intrinsic version</figcaption>
+</figure>
+
+<figure style="text-align: center;">
+    <img src="img/callgrind/callgrind_strcmp_int.png" alt="Callgrind strcmp_int version" width="1000">
+    <figcaption>Callgrind strcmp intrinsic version</figcaption>
+</figure>
+
+> [!NOTE]
+> Можем заметить, что из callgrind пропала информация про функцию `__strcmp_avx2`, которая была заменена на соответствующие интринсики, отсюда сделаем вывод, что в дальнейшем не будем прибегать к результатам данного профилировщика, так как он не отображает время, затраченное на работу intrinsic функций.
+
+> [!NOTE]
+> По результатам perf на первом месте появились интринсики, заменившие собой `__strcmp_avx2`. Данное 'узкое место' программы уже подверглась оптимизации, поэтому для дальнейших оптимизаций выбираем
 
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>
 

@@ -11,7 +11,7 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 	if (!buffer->data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
-	FILE* rework = fopen(_FILE_REWORK, "r");
+	FILE* rework = fopen(_FILE_REWORK, "r" _FILE_OPEN_MODE);
 	if (!rework)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
@@ -22,7 +22,7 @@ HashTableStatusCode BufferCtor(Buffer* buffer) {
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_CLOSE_ERROR);
 
 	for (size_t i = 0; i < buffer->size; i++) {
-		if (buffer->data[i] == _END_SYMBOL) {
+		if (buffer->data[i] == '\n') {
 			buffer->data[i] = '\0';
 			buffer->words_cnt++;
 			#ifndef BASE
@@ -56,17 +56,17 @@ List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 
 #ifdef BASE
 	buffer->shift += length + 1;
-	hash %= buckets->size;
+	// hash %= buckets->size;
 #else
 	buffer->shift += ALIGNMENT_COUNT;
-	asm ("mov %1, %%rdi\n"
-		 "and %2, %%rdi\n"
-		 "mov %%rdi, %0"
-		 : "=r" (hash)
-		 : "r"  (hash), "r" (OPTIMIZE_BUCKETS_SIZE - 1)
-		 : "%rdi");
+	// asm ("mov %1, %%rdi\n"
+	// 	 "and %2, %%rdi\n"
+	// 	 "mov %%rdi, %0"
+	// 	 : "=r" (hash)
+	// 	 : "r"  (hash), "r" (OPTIMIZE_BUCKETS_SIZE - 1)
+	// 	 : "%rdi");
 #endif
-	return buckets->lists + hash;
+	return buckets->lists + (hash % buckets->size);
 }
 
 HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {

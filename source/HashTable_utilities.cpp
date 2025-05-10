@@ -45,7 +45,7 @@ HashTableStatusCode DataFileRework() {
 	ht_status = ReadFromInputFile(buffer, buf_size);
 	HASHTABLE_ERROR_CHECK(ht_status);
 
-	FILE* output = fopen(_FILE_REWORK, "w");
+	FILE* output = fopen(_FILE_REWORK, "w" _FILE_OPEN_MODE);
 	if (!output)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_FILE_OPEN_ERROR);
 
@@ -58,7 +58,10 @@ HashTableStatusCode DataFileRework() {
 #ifdef BASE
 		fprintf(output, "%s\n", buffer + start_index);
 #else
-		fprintf(output, "%s%*s\n", buffer + start_index, ALIGNMENT_COUNT - (int)(end_index - start_index) - 1, "\0");
+		fprintf(output, "%s", buffer + start_index);
+		for (int i = 0; i < ALIGNMENT_COUNT - (int)(end_index - start_index) - 1; i++)
+			fprintf(output, "%c", '\0');
+		fprintf(output, "\n");
 #endif
 		start_index = ++end_index;
 	}
