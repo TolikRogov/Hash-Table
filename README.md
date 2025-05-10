@@ -77,6 +77,26 @@ $$Load \space factor = \frac{Количество \space объектов \space
 
 ## Выбор хэш-функции
 
+Проведем анализ некоторых хэш-функций с помощью скрипта, написанного на языке _python_, позволяющего наглядно увидеть распределение данных для определенной хэш-функции на _гистограмме_ и рассчитывающий _дисперсию_ значений заполненности bucket-ов в таблице. Наилучшей функцией будем считать ту, распределение данных по которой наиболее случайно на гистограмме и дисперсия минимальна.
+
+<figure style="text-align: center;">
+    <img src="Dump/img/Strlen.svg" alt="Strlen hash" width="1000">
+</figure>
+
+<figure style="text-align: center;">
+    <img src="Dump/img/ASCIIsum.svg" alt="ASCIIsum hash" width="1000">
+</figure>
+
+<figure style="text-align: center;">
+    <img src="Dump/img/MURMUR1.svg" alt="MurMur1 hash" width="1000">
+</figure>
+
+<figure style="text-align: center;">
+    <img src="Dump/img/CRC32.svg" alt="CRC32 hash" width="1000">
+</figure>
+
+Можно сделать вывод, что среди рассмотренных хэш-функций наиболее случайное распределение имеют `MurMur1 hash` и `CRC32 hash`, но последняя все же имеет наименьшую дисперсию. Именно **_CRC32 hash_** выбрана для хэш-таблицы.
+
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>
 
 ---

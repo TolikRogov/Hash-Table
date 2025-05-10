@@ -138,10 +138,10 @@ HashTableStatusCode BucketsDump(Bucket_t* buckets) {
 				  "ax.patch.set_facecolor('#addaed')\n"
 				  "ax.patch.set_alpha(0.2)\n"
 				  "ax.bar(data['x'], data['y'], width = 2, color = '#82b2fa')\n"
-				  "ax.set_title('%s dump')\n"
-				  "ax.set_xlabel('Bucket number')\n"
-			      "ax.set_ylabel('Bucket size')\n"
-				  "fig.text(0.11, 0.05, f\"Dispersion: {np.var(data['y']):.2f}\")\n"
+				  "ax.set_title('%s dump', fontsize=24)\n"
+				  "ax.set_xlabel('Bucket number', fontsize=20)\n"
+			      "ax.set_ylabel('Bucket size', fontsize=20)\n"
+				  "fig.text(0.11, 0.05, f\"Dispersion: {np.var(data['y']):.2f}\", fontsize=20)\n"
 				  "plt.savefig('%s%s.%s', dpi=300)\n"
 				  "plt.show()\n",
 				  _DIR_DUMP_DATA, hash_func_name, _FILE_DATA_FORMAT,
