@@ -1,6 +1,5 @@
-![GitHub commit activity](https://img.shields.io/github/commit-activity/:interval/:user/:repo)
-![GitHub repo size](https://img.shields.io/github/repo-size/:user/:repo)
-![GitHub Repo stars](https://img.shields.io/github/stars/:user/:repo)
+![GitHub repo size](https://img.shields.io/github/repo-size/TolikRogov/Hash-Table)
+![GitHub Repo stars](https://img.shields.io/github/stars/TolikRogov/Hash-Table)
 
 # Hash Table
 
