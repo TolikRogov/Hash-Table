@@ -54,11 +54,7 @@ List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
 	size_t length = strlen(*word);
 	size_t hash = buckets->hash_function(*word, length);
 
-#ifdef BASE
-	buffer->shift += length + 1;
-#else
-	buffer->shift += ALIGNMENT_COUNT;
-#endif
+	buffer->shift = SHIFT_CHANGE;
 	return buckets->lists + (hash % buckets->size);
 }
 

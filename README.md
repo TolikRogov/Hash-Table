@@ -16,6 +16,8 @@
 - [Базовая версия](#базовая-версия)
 - [Версия с оптимизациями компилятора](#версия-с-оптимизациями-компилятора)
 - [Оптимизация strcmp](#оптимизация-strcmp)
+- [Оптимизация crc32Hash](#оптимизация-crc32hash)
+- [Оптимизация FindListForWord](#оптимизация-findlistforword)
 - [Анализ результатов](#анализ-результатов)
 - [Вывод](#вывод)
 
@@ -286,7 +288,7 @@ $$Load \space factor = \frac{Количество \space объектов \space
 > По результатам профилировщиков на данный момент нельзя выбрать один из них.
 
 $$
-Коэффициент \space ускорения = \frac{21,20}{16,70} = 1,27 \space (27\%)
+Коэффициент \space ускорения = \frac{21,20}{16,70} = 1,27
 $$
 
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>
@@ -350,8 +352,121 @@ $$
 > Заметим, что следующая функция <a href="#list-find-element">`ListFindElement`</a> содержит оптимизации предыдущего этапа и рекурсивный вызов сомой себя. Если применить оптимизацию ассемблерной вставкой или переписать всю функцию на языке ассемблера, то пропадет смысл оптимизаций на шаге ранее. Поэтому в качестве следующей функции для оптимизации выберем `crc32Hash`.
 
 $$
-Коэффициент \space ускорения = \frac{16,70}{13,67} = 1,22 \space (22\%)
+Коэффициент \space ускорения = \frac{16,70}{13,67} = 1,22
 $$
+
+<p align="right"><a href=#оглавление>(к оглавлению)</a></p>
+
+---
+
+## Оптимизация crc32Hash
+
+1. Оптимизацию функцию хэширования произведем путем написания самой функции на языке ассемблера.
+
+<details>
+    <summary>crc32Hash на ассемблере:</summary>
+
+    global crc32Asm
+    section .text
+
+    ;==============================================================================
+    ;	Give string hash
+    ;	Entry:		RDI - address of bytes string
+    ;				RSI - size of string in bytes
+    ;	Exit:		AX - string hash
+    ;	Destroy:	RSI, RDI, RAX
+    ;==============================================================================
+    crc32Asm:
+        add rsi, rdi
+        mov rax, 0xFFFFFFFF
+        crc_loop:
+            add rdi, 0x1
+            crc32 rax, byte [rdi - 0x1]
+            cmp rdi, rsi
+        jne crc_loop
+        not rax
+        ret
+    ;==============================================================================
+
+</details>
+
+> [!TIP]
+> Убеждаемся в случайности распределения функции:
+
+<figure style="text-align: center;">
+    <img src="Dump/img/CRC32ASM.svg" alt="CRC32 assembler version" width="1000">
+</figure>
+
+|  №   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |
+| :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| t, c | 13,27 | 13,33 | 13,35 | 13,30 | 13,34 | 13,39 | 13,30 | 13,33 | 13,21 | 13,43 |
+
+**Статистика**
+
+- Среднее время: `13,33 ± 0,011` с (`0,1` %)
+
+<figure style="text-align: center;">
+    <img src="img/perf/perf_crc32_asm.png" alt="Perf crc32 asm version" width="1000">
+    <figcaption>Perf crc32Hash assembler version</figcaption>
+</figure>
+
+> [!NOTE]
+> Из результатов профилировщика замечаем, что `??` отражает нашу функцию, но кардинальных изменений собственных времен функций не наблюдаем, в прочем как и сильного ускорения программы, однако
+
+$$
+Коэффициент \space ускорения = \frac{13,67}{13,33} \approx 1,03
+$$
+
+2. Также рассмотрим оптимизацию с помощью интринсиков.
+
+<details>
+    <summary>crc32Hash на интринсиках:</summary>
+
+    hash_t crc32IntrinsicHash(const void* bytes, const size_t size_in_bytes) {
+
+        hash_t crc = CRC32_INIT_CRC;
+        const u_char* byte = (const u_char*)bytes;
+
+        for (size_t i = 0; i < size_in_bytes; i++)
+            crc = _mm_crc32_u8(crc, *byte++);
+
+        return crc ^ 0xFFFFFFFF;
+    }
+
+</details>
+
+> [!TIP]
+> Убеждаемся в случайности распределения функции:
+
+<figure style="text-align: center;">
+    <img src="Dump/img/CRC32Intrinsic.svg" alt="CRC32 intrinsic version" width="1000">
+</figure>
+
+|  №   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |
+| :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
+| t, c | 13,65 | 13,42 | 13,50 | 13,60 | 13,43 | 13,42 | 13,51 | 13,38 | 13,48 | 13,43 |
+
+**Статистика**
+
+- Среднее время: `13,48 ± 0,02` с (`0,2` %)
+
+<figure style="text-align: center;">
+    <img src="img/perf/perf_crc32_int.png" alt="Perf crc32 intrinsic version" width="1000">
+    <figcaption>Perf crc32Hash intrinsic version</figcaption>
+</figure>
+
+> [!NOTE]
+> Видно, что наша хэш-функция стала значительно меньше выполняться по времени. Также можем сделать выбор для функции подходящей для следующей оптимизации - `FindListForWord`. Однако, общая производительность программы упала:
+
+$$
+Коэффициент \space ускорения = \frac{13,67}{13,48} \approx 1,01
+$$
+
+<p align="right"><a href=#оглавление>(к оглавлению)</a></p>
+
+---
+
+## Оптимизация FindListForWord
 
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>
 

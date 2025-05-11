@@ -2,10 +2,10 @@
 
 cmake -S ./ -B build/Release -DCMAKE_BUILD_TYPE=Release
 cmake --build build/Release
-./build/Release/HashTable --crc32
-# valgrind --tool=callgrind ./build/Release/HashTable --crc32
-# perf record -F 101 -g ./build/Release/HashTable --crc32
+./build/Release/HashTable --crc32_asm
+# valgrind --tool=callgrind ./build/Release/HashTable --crc32_asm
+# perf record -F 101 -g ./build/Release/HashTable --crc32_asm
 
 # cmake -S ./ -B build/Debug -DCMAKE_BUILD_TYPE=Debug
 # cmake --build build/Debug
-# ./build/Debug/HashTable --crc32
+# ./build/Debug/HashTable --crc32_asm

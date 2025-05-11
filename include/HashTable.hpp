@@ -8,6 +8,12 @@ const size_t LOAD_FACTOR 			= 15;
 const size_t FINDER_ITERATIONS 		= 700;
 const size_t OPTIMIZE_BUCKETS_SIZE  = 1024;
 
+#ifdef BASE
+	#define SHIFT_CHANGE length + 1
+#else
+	#define SHIFT_CHANGE ALIGNMENT_COUNT
+#endif
+
 #define BUCKETS_CTOR(buckets) {								\
 	ht_status = BucketsCtor(buckets);						\
 	HASHTABLE_ERROR_CHECK(ht_status);						\
