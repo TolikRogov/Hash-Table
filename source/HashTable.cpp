@@ -60,7 +60,7 @@ HashTableStatusCode BucketsCtor(Bucket_t* buckets) {
 	}
 #else
 	List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
-		List_t* list = 0;
+		List_t* list = NULL;
 		asm volatile (
 			 "mov 0x8(%[buffer]), %%r12\n"								//r12 = buffer->data
 			 "add 0x18(%[buffer]), %%r12\n"								//r12 += buffer->shift
