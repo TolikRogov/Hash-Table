@@ -49,14 +49,50 @@ HashTableStatusCode BucketsCtor(Bucket_t* buckets) {
 	return HASHTABLE_NO_ERROR;
 }
 
-List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
-	*word = buffer->data + buffer->shift;
-	size_t length = strlen(*word);
-	size_t hash = buckets->hash_function(*word, length);
+#ifdef BASE
+	List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
+		*word = buffer->data + buffer->shift;
+		size_t length = strlen(*word);
+		size_t hash = buckets->hash_function(*word, length);
 
-	buffer->shift = SHIFT_CHANGE;
-	return buckets->lists + (hash % buckets->size);
-}
+		buffer->shift += length + 1;
+		return buckets->lists + (hash % buckets->size);
+	}
+#else
+	List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
+		size_t length = 0,
+			   hash   = 0;
+		asm volatile (
+			 "mov 0x8(%[buffer]), %%r12\n"								//r12 = buffer->data
+			 "add 0x18(%[buffer]), %%r12\n"								//r12 += buffer->shift
+			 "mov %%r12, (%[word])\n"									//*word = r12;
+
+			 "mov %%r12, %%rdi\n"										//
+			 "call strlen\n"											//length = strlen(*word)
+			 "mov %%rax, %[len]\n"										//
+
+			 "mov %[buckets], %%rbx\n"									//rbx = buckets
+			 "mov %%rax, %%rsi\n"										//rsi = length
+			 "mov 0x10(%%rbx), %%rax\n"									//rax = buckets->hash_function
+			 "call *%%rax\n"											//
+			 "mov %%rax, %[hash]\n"										//hash = buckets->hash_function(*word, length)
+
+			 "mov $0x20, %%rcx\n"										//rcx = ALIGNMENT_COUNT
+			 "add %%rcx, 0x18(%[buffer])\n"								//buffer->shift += rcx
+
+			 : [len] "=r" (length),										//output parameters
+			   [hash] "=r" (hash),
+			   "+o" (word)												//input and output parameter
+			 : [buffer] 	"r"(buffer),								//input parameters
+			   [buckets] 	"r" (buckets),
+			   [word] 		"r" (word)
+			 : "%r12", "%rbx", "%rsi", "%rdi",
+			   "%rax", "%rcx", "%r11", "memory"							//changed registers
+		);
+
+		return buckets->lists + (hash % buckets->size);
+	}
+#endif
 
 HashTableStatusCode BucketsUploader(Buffer* buffer, Bucket_t* buckets) {
 
