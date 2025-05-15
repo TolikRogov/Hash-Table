@@ -2,7 +2,7 @@
 
 #include "HashTable_utilities.hpp"
 
-typedef u_int32_t hash_t;
+typedef u_int64_t hash_t;
 typedef hash_t (*hash_func_t) (const void* bytes, size_t size_in_bytes);
 
 const hash_t CRC32_POLYNOMIAL 	= 0xEDB88320;

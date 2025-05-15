@@ -124,6 +124,9 @@ $$Load \space factor = \frac{Количество \space объектов \space
 
 </details>
 
+> [!NOTE]
+> Данная хэш-функция плохо масштабируется, так сумма ASCII-кодов слова величина ограниченная.
+
 <figure style="text-align: center;">
     <img src="Dump/img/MURMUR1.svg" alt="MurMur1 hash" width="1000">
 </figure>
