@@ -282,7 +282,7 @@ kcachegrind callgrind.out.base
 
 **Статистика**
 
-- Среднее время: `16,70 ± 0,05` с (`0,3` %)
+- Среднее время: `16,70 ± 0,15` с (`0,3` %)
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_o3.png" alt="Perf o3 version" width="1000">
@@ -343,7 +343,7 @@ $$
 
 **Статистика**
 
-- Среднее время: `13,670 ± 0,013` с (`0,1` %)
+- Среднее время: `13,67 ± 0,04` с (`0,1` %)
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_strcmp_int.png" alt="Perf strcmp_int version" width="1000">
@@ -416,7 +416,7 @@ $$
 
 **Статистика**
 
-- Среднее время: `13,33 ± 0,011` с (`0,1` %)
+- Среднее время: `13,33 ± 0,03` с (`0,1` %)
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_crc32_asm.png" alt="Perf crc32 asm version" width="1000">
@@ -461,7 +461,7 @@ $$
 
 **Статистика**
 
-- Среднее время: `13,48 ± 0,02` с (`0,2` %)
+- Среднее время: `13,48 ± 0,06` с (`0,2` %)
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_crc32_int.png" alt="Perf crc32 intrinsic version" width="1000">
@@ -530,7 +530,7 @@ $$
 
 **Статистика**
 
-- Среднее время: `12,17 ± 0,01` с (`0,1` %)
+- Среднее время: `12,17 ± 0,03` с (`0,1` %)
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_list_find.png" alt="Perf FindListForWord version" width="1000">
