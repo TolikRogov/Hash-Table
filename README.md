@@ -32,19 +32,23 @@
 
 Каждый слот массива - указатель на связный список пар ключ-значения, для которых хеш-функция выдала один результат. Коллизии приводят к тому, что появляются списки длиной более одного элемента. Чтобы избежать коллизий в данной работе используется линейный поиск элементов внутри списка (bucket-а).
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/list-has-table.svg" alt="Метод списков" width="1000">
     <p>Рис. 1 - Метод списков</p>
 </figure>
+</div>
 
 2. **Открытая адресация**
 
 Элементы хэш-таблицы хранятся в общем массиве. Если происходит коллизия, то ищется свободная ячейка по определенной схеме (**_метод пробирования_**/**_probing_**) в зависимости от реализации: линейное, квадратичное пробирование или двойное хэширование.
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/open-hash-table.svg" alt="Открытая адресация" width="1000">
     <p>Рис. 2 - Открытая адресация</p>
 </figure>
+</div>
 
 > [!NOTE]
 > Кроме того, существует `Кукушкино хэширование`, использующее две хэш-функции для нахождения позиции элемента в хэш-таблице.
@@ -97,7 +101,7 @@ $$Load \space factor = \frac{Количество \space объектов \space
 
 <div align="center">
 <details>
-    <summary>Рис. 3 - Хэш-функция длины слова</summary>
+    <summary>Рис. 3 - Распределение хэш-функции длины слова</summary>
 
     hash_t StrlenHash(const void* bytes, const size_t size_in_bytes) {
         return (hash_t)size_in_bytes;
@@ -112,7 +116,7 @@ $$Load \space factor = \frac{Количество \space объектов \space
 
 <div align="center">
 <details>
-    <summary>Рис. 4 - Хэш-функция суммы ASCII кодов слова</summary>
+    <summary>Рис. 4 - Распределение хэш-функции суммы ASCII кодов слова</summary>
 
     hash_t ASCIIsumHash(const void* bytes, const size_t size_in_bytes) {
 
@@ -183,7 +187,7 @@ $$Load \space factor = \frac{Количество \space объектов \space
 
 <div align="center">
 <details style="text-align: center;">
-    <summary>Рис. 6 - Хэш-функция Crc32</summary>
+    <summary>Рис. 6 - Распределение хэш-функции Crc32</summary>
 
     hash_t crc32Hash(const void* bytes, const size_t size_in_bytes) {
 
@@ -262,15 +266,19 @@ kcachegrind callgrind.out.base
 
 - Среднее время: `21,20 ± 0,06` с (`0,1` %)
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/perf/perf_base.png" alt="Perf base version" width="1000">
     <p>Рис. 7 - Профилирование базовой версии с Perf</p>
 </figure>
+</div>
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/callgrind/callgrind_base.png" alt="Callgrind base version" width="1000">
     <p>Рис. 8 - Профилирование базовой версии с Callgrind</p>
 </figure>
+</div>
 
 > [!NOTE]
 > Можем увидеть, что инструменты выдали разный результат по собственному времени выполнения функций. Из подобного анализа мы можем убедиться по функции `crc32Hash` в `Callgrind` в том, что поиск элементов в таблице много превышает загрузку: `372446207` = `700` \* `531307` (Поиск) + `531307` (Загрузка).
@@ -292,15 +300,19 @@ kcachegrind callgrind.out.base
 
 - Среднее время: `16,70 ± 0,15` с (`0,3` %)
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/perf/perf_o3.png" alt="Perf o3 version" width="1000">
     <p>Рис. 9 - Профилирование O3 версии с Perf</p>
 </figure>
+</div>
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/callgrind/callgrind_o3.png" alt="Callgrind o3 version" width="1000">
     <p>Рис. 10 - Профилирование O3 версии с Callgrind</p>
 </figure>
+</div>
 
 > [!NOTE]
 > Видим, что наибольшей по времени выполнения является функция `__strcmp_avx2`, следовательно оптимизировать первой будем именно её.
@@ -353,15 +365,19 @@ $$
 
 - Среднее время: `13,67 ± 0,04` с (`0,1` %)
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/perf/perf_strcmp_int.png" alt="Perf strcmp_int version" width="1000">
     <p>Рис. 11 - Профилирование версии intrinsic strcmp с Perf</p>
 </figure>
+</div>
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/callgrind/callgrind_strcmp_int.png" alt="Callgrind strcmp_int version" width="1000">
     <p>Рис. 12 - Профилирование версии intrinsic strcmp с Callgrind</p>
 </figure>
+</div>
 
 > [!NOTE]
 > Можем заметить, что из callgrind пропала информация про функцию `__strcmp_avx2`, которая была заменена на соответствующие интринсики, отсюда сделаем вывод, что в дальнейшем не будем прибегать к результатам данного профилировщика, так как он не отображает время, затраченное на работу intrinsic функций.
@@ -414,10 +430,12 @@ $$
 > [!TIP]
 > Убеждаемся в случайности распределения функции:
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="Dump/img/CRC32ASM.svg" alt="CRC32 assembler version" width="1000">
     <p>Рис. 13 - Распределение хэш-функции Crc32 на ассемблере</p>
 </figure>
+</div>
 
 |  №   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |
 | :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -427,10 +445,12 @@ $$
 
 - Среднее время: `13,33 ± 0,03` с (`0,1` %)
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/perf/perf_crc32_asm.png" alt="Perf crc32 asm version" width="1000">
     <p>Рис. 14 - Профилирование версии assembler crc32 с Perf</p>
 </figure>
+</div>
 
 > [!NOTE]
 > Из результатов профилировщика замечаем, что `??` отражает нашу функцию, но кардинальных изменений собственных времен функций не наблюдаем, в прочем как и сильного ускорения программы, однако
@@ -460,10 +480,12 @@ $$
 > [!TIP]
 > Убеждаемся в случайности распределения функции:
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="Dump/img/CRC32Intrinsic.svg" alt="CRC32 intrinsic version" width="1000">
     <p>Рис. 15 - Распределение хэш-функции Crc32 на интринсиках</p>
 </figure>
+</div>
 
 |  №   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |
 | :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
@@ -473,10 +495,12 @@ $$
 
 - Среднее время: `13,48 ± 0,06` с (`0,2` %)
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/perf/perf_crc32_int.png" alt="Perf crc32 intrinsic version" width="1000">
     <p>Рис. 16 - Профилирование версии intrinsic crc32 с Perf</p>
 </figure>
+</div>
 
 > [!NOTE]
 > Видно, что наша хэш-функция стала значительно меньше выполняться по времени. Также можем сделать выбор для функции подходящей для следующей оптимизации - `FindListForWord`. Однако, коэффициент ускорения стал ниже:
@@ -542,10 +566,12 @@ $$
 
 - Среднее время: `12,17 ± 0,03` с (`0,1` %)
 
+<div align="center">
 <figure style="text-align: center;">
     <img src="img/perf/perf_list_find.png" alt="Perf FindListForWord version" width="1000">
     <p>Рис. 17 - Профилирование версии FindListForWord с Perf</p>
 </figure>
+</div>
 
 > [!NOTE]
 > Прирост ускорения выполнения программы на данном этапе оптимизации оказался больше, нежели раньше.
