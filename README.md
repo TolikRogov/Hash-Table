@@ -34,7 +34,7 @@
 
 <figure style="text-align: center;">
     <img src="img/list-has-table.svg" alt="Метод списков" width="1000">
-    <figcaption>Метод списков</figcaption>
+    <p>Рис. 1 - Метод списков</p>
 </figure>
 
 2. **Открытая адресация**
@@ -43,7 +43,7 @@
 
 <figure style="text-align: center;">
     <img src="img/open-hash-table.svg" alt="Открытая адресация" width="1000">
-    <figcaption>Открытая адресация</figcaption>
+    <p>Рис. 2 - Открытая адресация</p>
 </figure>
 
 > [!NOTE]
@@ -95,21 +95,24 @@ $$Load \space factor = \frac{Количество \space объектов \space
     <img src="Dump/img/Strlen.svg" alt="Strlen hash" width="1000">
 </figure>
 
-<details style="text-align: center;">
-    <summary>hash_t StrlenHash</summary>
+<div align="center">
+<details>
+    <summary>Рис. 3 - Хэш-функция длины слова</summary>
 
     hash_t StrlenHash(const void* bytes, const size_t size_in_bytes) {
         return (hash_t)size_in_bytes;
     }
 
 </details>
+</div>
 
 <figure style="text-align: center;">
     <img src="Dump/img/ASCIIsum.svg" alt="ASCIIsum hash" width="1000">
 </figure>
 
-<details style="text-align: center;">
-    <summary>hash_t ASCIIsumHash</summary>
+<div align="center">
+<details>
+    <summary>Рис. 4 - Хэш-функция суммы ASCII кодов слова</summary>
 
     hash_t ASCIIsumHash(const void* bytes, const size_t size_in_bytes) {
 
@@ -123,16 +126,18 @@ $$Load \space factor = \frac{Количество \space объектов \space
     }
 
 </details>
+</div>
 
 > [!NOTE]
-> Данная хэш-функция плохо масштабируется, так сумма ASCII-кодов слова величина ограниченная.
+> Данная хэш-функция плохо масштабируется, так как сумма ASCII-кодов слова величина ограниченная.
 
 <figure style="text-align: center;">
     <img src="Dump/img/MURMUR1.svg" alt="MurMur1 hash" width="1000">
 </figure>
 
+<div align="center">
 <details style="text-align: center;">
-    <summary>hash_t MurMur1Hash</summary>
+    <summary>Рис. 5 - Хэш-функция MurMur1</summary>
 
     hash_t MurMur1Hash(const void* bytes, const size_t size_in_bytes) {
 
@@ -170,13 +175,15 @@ $$Load \space factor = \frac{Количество \space объектов \space
     }
 
 </details>
+</div>
 
 <figure style="text-align: center;">
     <img src="Dump/img/CRC32.svg" alt="CRC32 hash" width="1000">
 </figure>
 
+<div align="center">
 <details style="text-align: center;">
-    <summary>hash_t crc32Hash</summary>
+    <summary>Рис. 6 - Хэш-функция Crc32</summary>
 
     hash_t crc32Hash(const void* bytes, const size_t size_in_bytes) {
 
@@ -191,10 +198,11 @@ $$Load \space factor = \frac{Количество \space объектов \space
     }
 
 </details>
+</div>
 
-|     №      | StrlenHash | ASCIIsumHash | MURMUR1Hash | CRC32Hash |
-| :--------: | :--------: | :----------: | :---------: | :-------: |
-| Dispersion |  38896,26  |    196,65    |    20,01    |   19,78   |
+| HashFunction | StrlenHash | ASCIIsumHash | MURMUR1Hash | CRC32Hash |
+| :----------: | :--------: | :----------: | :---------: | :-------: |
+|  Dispersion  |  38896,26  |    196,65    |    20,01    |   19,78   |
 
 Можно сделать вывод, что среди рассмотренных хэш-функций наиболее случайное распределение имеют `MurMur1 hash` и `CRC32 hash`, но последняя все же имеет наименьшую дисперсию. Именно **_CRC32 hash_** выбрана для хэш-таблицы.
 
@@ -256,12 +264,12 @@ kcachegrind callgrind.out.base
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_base.png" alt="Perf base version" width="1000">
-    <figcaption>Perf base version (-O0)</figcaption>
+    <p>Рис. 7 - Профилирование базовой версии с Perf</p>
 </figure>
 
 <figure style="text-align: center;">
     <img src="img/callgrind/callgrind_base.png" alt="Callgrind base version" width="1000">
-    <figcaption>Callgrind base version (-O0)</figcaption>
+    <p>Рис. 8 - Профилирование базовой версии с Callgrind</p>
 </figure>
 
 > [!NOTE]
@@ -286,12 +294,12 @@ kcachegrind callgrind.out.base
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_o3.png" alt="Perf o3 version" width="1000">
-    <figcaption>Perf O3 version</figcaption>
+    <p>Рис. 9 - Профилирование O3 версии с Perf</p>
 </figure>
 
 <figure style="text-align: center;">
     <img src="img/callgrind/callgrind_o3.png" alt="Callgrind o3 version" width="1000">
-    <figcaption>Callgrind O3 version</figcaption>
+    <p>Рис. 10 - Профилирование O3 версии с Callgrind</p>
 </figure>
 
 > [!NOTE]
@@ -347,12 +355,12 @@ $$
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_strcmp_int.png" alt="Perf strcmp_int version" width="1000">
-    <figcaption>Perf strcmp intrinsic version</figcaption>
+    <p>Рис. 11 - Профилирование версии intrinsic strcmp с Perf</p>
 </figure>
 
 <figure style="text-align: center;">
     <img src="img/callgrind/callgrind_strcmp_int.png" alt="Callgrind strcmp_int version" width="1000">
-    <figcaption>Callgrind strcmp intrinsic version</figcaption>
+    <p>Рис. 12 - Профилирование версии intrinsic strcmp с Callgrind</p>
 </figure>
 
 > [!NOTE]
@@ -408,6 +416,7 @@ $$
 
 <figure style="text-align: center;">
     <img src="Dump/img/CRC32ASM.svg" alt="CRC32 assembler version" width="1000">
+    <p>Рис. 13 - Распределение хэш-функции Crc32 на ассемблере</p>
 </figure>
 
 |  №   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |
@@ -420,7 +429,7 @@ $$
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_crc32_asm.png" alt="Perf crc32 asm version" width="1000">
-    <figcaption>Perf crc32Hash assembler version</figcaption>
+    <p>Рис. 14 - Профилирование версии assembler crc32 с Perf</p>
 </figure>
 
 > [!NOTE]
@@ -453,6 +462,7 @@ $$
 
 <figure style="text-align: center;">
     <img src="Dump/img/CRC32Intrinsic.svg" alt="CRC32 intrinsic version" width="1000">
+    <p>Рис. 15 - Распределение хэш-функции Crc32 на интринсиках</p>
 </figure>
 
 |  №   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |
@@ -465,7 +475,7 @@ $$
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_crc32_int.png" alt="Perf crc32 intrinsic version" width="1000">
-    <figcaption>Perf crc32Hash intrinsic version</figcaption>
+    <p>Рис. 16 - Профилирование версии intrinsic crc32 с Perf</p>
 </figure>
 
 > [!NOTE]
@@ -534,7 +544,7 @@ $$
 
 <figure style="text-align: center;">
     <img src="img/perf/perf_list_find.png" alt="Perf FindListForWord version" width="1000">
-    <figcaption>Perf FindListForWord</figcaption>
+    <p>Рис. 17 - Профилирование версии FindListForWord с Perf</p>
 </figure>
 
 > [!NOTE]
