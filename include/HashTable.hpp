@@ -4,7 +4,7 @@
 #include "List.hpp"
 
 const size_t AMOUNT_UNIQUE_WORDS 	= 19030;
-const size_t LOAD_FACTOR 			= 15;
+const size_t LOAD_FACTOR 			= 19;
 const size_t FINDER_ITERATIONS 		= 700;
 const size_t OPTIMIZE_BUCKETS_SIZE  = 1024;
 

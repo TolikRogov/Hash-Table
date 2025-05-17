@@ -2,6 +2,12 @@
 
 #include "HashTable_utilities.hpp"
 
+#ifdef BASE
+	typedef char List_key_t;
+#else
+	typedef __m256i List_key_t;
+#endif
+
 #define LIST_CTOR(list) {							 \
 	ht_status = ListCtor(list);						\
 	HASHTABLE_ERROR_CHECK(ht_status);				\
@@ -23,7 +29,7 @@
 }													\
 
 struct Element_t {
-	char* word;
+	List_key_t* word;
 	size_t frequency;
 };
 
@@ -41,7 +47,7 @@ struct List_t {
 HashTableStatusCode ListCtor(List_t* list);
 HashTableStatusCode ListDtor(Data_t* cur_data);
 HashTableStatusCode ListAdd(List_t* list, char* word);
-Data_t* ListFindElement(Data_t* data, char* word);
+Data_t* ListFindElement(Data_t* data, List_key_t* word);
 
 HashTableStatusCode ListPrint(List_t* list);
 HashTableStatusCode ListPrintData(Data_t* data);

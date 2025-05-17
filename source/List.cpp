@@ -39,13 +39,13 @@ HashTableStatusCode ListAdd(List_t* list, char* word) {
 		HASHTABLE_ERROR_CHECK(HASHTABLE_NULL_POINTER);
 
 	if (list->size == 0) {
-		list->tail->data->word = word;
+		list->tail->data->word = (List_key_t*)word;
 		list->tail->data->frequency = 1;
 		list->size++;
 		return HASHTABLE_NO_ERROR;
 	}
 
-	Data_t* founded = ListFindElement(list->head, word);
+	Data_t* founded = ListFindElement(list->head, (List_key_t*) word);
 	if (founded) {
 		founded->data->frequency++;
 		return HASHTABLE_NO_ERROR;
@@ -64,14 +64,14 @@ HashTableStatusCode ListAdd(List_t* list, char* word) {
 	if (!list->tail->data)
 		HASHTABLE_ERROR_CHECK(HASHTABLE_ALLOCATION_ERROR);
 
-	list->tail->data->word = word;
+	list->tail->data->word = (List_key_t*) word;
 	list->tail->data->frequency = 1;
 	list->size++;
 
 	return HASHTABLE_NO_ERROR;
 }
 
-Data_t* ListFindElement(Data_t* data, char* word) {
+Data_t* ListFindElement(Data_t* data, List_key_t* word) {
 
 	if (!data)
 		return NULL;
@@ -80,7 +80,7 @@ Data_t* ListFindElement(Data_t* data, char* word) {
 	if (!strcmp(data->data->word, word))
 		return data;
 #else
-	if (_mm256_movemask_epi8(_mm256_cmpeq_epi64(*(__m256i*)data->data->word, *(__m256i*)word)) == -1)
+	if (_mm256_movemask_epi8(_mm256_cmpeq_epi64(*data->data->word, *word)) == -1)
 		return data;
 #endif
 
@@ -118,7 +118,7 @@ HashTableStatusCode ListPrintData(Data_t* data) {
 HashTableStatusCode PrintElement(Element_t* Element) {
 
 	printf(BLUE("Element address: %p")"\n", Element);
-	printf(GREEN("Word: %s")"\n", Element->word);
+	printf(GREEN("Word: %s")"\n", (char*)Element->word);
 	printf(GREEN("Word frequency: %zu")"\n", Element->frequency);
 
 	return HASHTABLE_NO_ERROR;
