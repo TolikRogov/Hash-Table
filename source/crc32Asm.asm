@@ -10,16 +10,23 @@ section .text										;start of code segment
 ;	Entry:		RDI - address of bytes string
 ;				RSI - size of string in bytes
 ;	Exit:		AX - string hash
-;	Destroy:	RSI, RDI, RAX
+;	Destroy:	RSI, RDI, RAX, R8
 ;==============================================================================
 crc32Asm:
-	add rsi, rdi
 	mov rax, 0xFFFFFFFF
-	crc_loop:
-		add rdi, 0x1
-		crc32 rax, byte [rdi - 0x1]
-		cmp rdi, rsi
-	jne crc_loop
+
+	mov r8, [rdi]
+	crc32 rax, r8
+
+	mov r8, [rdi + 0x08]
+	crc32 rax, r8
+
+	mov r8, [rdi + 0x10]
+	crc32 rax, r8
+
+	mov r8, [rdi + 0x18]
+	crc32 rax, r8
+
 	not rax
 	ret
 ;==============================================================================

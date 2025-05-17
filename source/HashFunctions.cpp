@@ -65,10 +65,10 @@ hash_t ASCIIsumHash(const void* bytes, const size_t size_in_bytes) {
 hash_t crc32IntrinsicHash(const void* bytes, const size_t size_in_bytes) {
 
     hash_t crc = CRC32_INIT_CRC;
-	const u_char* byte = (const u_char*)bytes;
+	const u_long* qword = (const u_long*)bytes;
 
-	for (size_t i = 0; i < size_in_bytes; i++)
-		crc = _mm_crc32_u8(crc, *byte++);
+	for (size_t i = 0; i < sizeof(__m256i) / sizeof(u_long); i++)
+		crc = _mm_crc32_u64(crc, *qword++);
 
     return crc ^ 0xFFFFFFFF;
 }

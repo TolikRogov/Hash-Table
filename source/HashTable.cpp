@@ -94,7 +94,7 @@ HashTableStatusCode BucketsCtor(Bucket_t* buckets) {
 // 		);
 // 		return list;
 		*word = buffer->data + buffer->shift;
-		size_t hash = crc32Hash(*word, ALIGNMENT_COUNT);
+		size_t hash = crc32IntrinsicHash(*word, ALIGNMENT_COUNT);
 
 		buffer->shift += ALIGNMENT_COUNT;
 		return buckets->lists + (hash % buckets->size);
