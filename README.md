@@ -589,36 +589,33 @@ $$
     <summary>Как выглядит функция после оптимизации:</summary>
 
     List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
-    	List_t* list = 0;
-    	asm volatile (
-    		 "mov 0x8(%[buffer]), %%r12\n"              //r12 = buffer->data
-    		 "add 0x18(%[buffer]), %%r12\n"		    //r12 += buffer->shift
-    		 "mov %%r12, (%[word])\n"                   //*word = r12;
+        List_t* list = NULL;
+        asm volatile (
+            "mov 0x8(%[buffer]), %%r12\n" //r12 = buffer->data
+            "add 0x18(%[buffer]), %%r12\n" //r12 += buffer->shift
+            "mov %%r12, (%[word])\n" //\*word = r12;
 
+    		 "mov %[buckets], %%rbx\n"									//rbx = buckets
+    		 "mov $0x20, %%rsi\n"										//rsi = length
     		 "mov %%r12, %%rdi\n"
-    		 "call strlen\n"			    //length = strlen(*word)
+    		 "call crc32Asm\n"											//
+    		 "mov %%rax, %%r8\n"										//hash = buckets->hash_function(*word, length)
 
-    		 "mov %[buckets], %%rbx\n"		    //rbx = buckets
-    		 "mov %%rax, %%rsi\n"			    //rsi = length
-    		 "mov 0x10(%%rbx), %%rax\n"		    //rax = buckets->hash_function
-    		 "call *%%rax\n"
-    		 "mov %%rax, %%r8\n"			    //hash = buckets->hash_function(*word, length)
+    		 "mov $0x20, %%rcx\n"										//rcx = ALIGNMENT_COUNT
+    		 "add %%rcx, 0x18(%[buffer])\n"								//buffer->shift += rcx
 
-    		 "mov $0x20, %%rcx\n"			    //rcx = ALIGNMENT_COUNT
-    		 "add %%rcx, 0x18(%[buffer])\n"		    //buffer->shift += rcx
+    		 "and $0x3ff, %%r8\n"										//hash &= 1024 - 1 | hash %= buckets->size
+    		 "mov 0x8(%%rbx), %%rax\n"									//rax = buckets->lists
+    		 "lea (%%r8, %%r8, 2), %%r8\n"								//r8 = 3 * r8
+    		 "lea (%%rax, %%r8, 8), %%rax\n"							//rax = rax + 8 * r8 | buckets->lists + (hash % buckets->size)
+    		 "mov %%rax, %[list]\n"										//list = rax
 
-    		 "and $0x3ff, %%r8\n"			    //hash &= 1024 - 1 | hash %= buckets->size
-    		 "mov 0x8(%%rbx), %%rax\n"		    //rax = buckets->lists
-    		 "lea (%%r8, %%r8, 2), %%r8\n"	            //r8 = 3 * r8
-    		 "lea (%%rax, %%r8, 8), %%rax\n"	    //rax = rax + 8 * r8 | buckets->lists + (hash % buckets->size)
-    		 "mov %%rax, %[list]\n"			    //list = rax
-
-    		 : [list] 	"=r" (list),		    //output parameter
-    		   "+o" (word)				    //input and output parameter
-    		 : [buffer] 	"r" (buffer),		    //input parameters
+    		 : [list] 		"=r" (list),								//output parameter
+    		   "+o" (word)												//input and output parameter
+    		 : [buffer] 	"r" (buffer),								//input parameters
     		   [buckets] 	"r" (buckets),
-    		   [word] 	"r" (word)
-    		 : "%r12", "%rbx", "%rsi", "%rdi", "%r8",   //changed registers
+    		   [word] 		"r" (word)
+    		 : "%r12", "%rbx", "%rsi", "%rdi", "%r8",					//changed registers
     		   "%rax", "%rcx", "%r11", "memory"
     	);
     	return list;
@@ -628,13 +625,13 @@ $$
 
 |  №   |   1   |   2   |   3   |   4   |   5   |   6   |   7   |   8   |   9   |  10   |
 | :--: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
-| t, c | 12,27 | 12,14 | 12,21 | 12,09 | 12,18 | 12,10 | 12,21 | 12,20 | 12,15 | 12,17 |
+| t, c | 10,33 | 10,36 | 10,45 | 10,35 | 10,42 | 10,29 | 10,39 | 10,30 | 10,32 | 10,32 |
 
 **Статистика**
 
-- Среднее время: `12,17 ± 0,03` с (`0,1` %)
+- Среднее время: `10,35 ± 0,03` с (`0,2` %)
   $$
-  Коэффициент \space ускорения = \frac{13,33}{12,17} \approx 1,09
+  Коэффициент \space ускорения = \frac{10,87}{10,35} \approx 1,05
   $$
 
 <div align="center">
@@ -647,7 +644,7 @@ $$
 <br>
 
 > [!NOTE]
-> Прирост ускорения выполнения программы на данном этапе оптимизации оказался больше, нежели раньше.
+> Прирост ускорения выполнения программы на данном этапе оптимизации оказался всего 5%.
 
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>
 
@@ -655,17 +652,17 @@ $$
 
 ## Вывод
 
-В рамках реальных промышленных задач прирост производительности в 9% является огромным, однако в рамках учебной задачи остановимся в оптимизации на данном этапе. Основные функции, связанные с алгоритмом поиска были улучшены в производительности. Общее ускорение составило:
+В рамках реальных промышленных задач прирост производительности в 5% является огромным, однако в рамках учебной задачи остановимся в оптимизации на данном этапе. Основные функции, связанные с алгоритмом поиска были улучшены в производительности. Общее ускорение составило:
 
 $$
-Коэффициент \space ускорения = \frac{21,20}{12,17} \approx 1,7
+Коэффициент \space ускорения = \frac{21,20}{10,35} \approx 2,05
 $$
 
 > [!NOTE]
-> Количество ассемблерных строк, потребовавшихся для оптимизации и ухудшившие читаемость программы - `31`
+> Количество ассемблерных строк, потребовавшихся для оптимизации и ухудшившие читаемость программы - `32`
 
 $$
-Тотальный \space коэффициент \space ускорения = \frac{1,7}{31} \cdot 1000 \approx 55
+Тотальный \space коэффициент \space ускорения = \frac{2,05}{32} \cdot 1000 \approx 64
 $$
 
 <p align="right"><a href=#оглавление>(к оглавлению)</a></p>

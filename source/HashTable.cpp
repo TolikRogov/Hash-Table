@@ -60,44 +60,36 @@ HashTableStatusCode BucketsCtor(Bucket_t* buckets) {
 	}
 #else
 	List_t* FindListForWord(Buffer* buffer, Bucket_t* buckets, char** word) {
-// 		List_t* list = NULL;
-// 		asm volatile (
-// 			 "mov 0x8(%[buffer]), %%r12\n"								//r12 = buffer->data
-// 			 "add 0x18(%[buffer]), %%r12\n"								//r12 += buffer->shift
-// 			 "mov %%r12, (%[word])\n"									//*word = r12;
-//
-// 			 "mov %%r12, %%rdi\n"										//
-// 			 "call strlen\n"											//length = strlen(*word)
-//
-// 			 "mov %[buckets], %%rbx\n"									//rbx = buckets
-// 			 "mov %%rax, %%rsi\n"										//rsi = length
-// 			 "mov 0x10(%%rbx), %%rax\n"									//rax = buckets->hash_function
-// 			 "call *%%rax\n"											//
-// 			 "mov %%rax, %%r8\n"										//hash = buckets->hash_function(*word, length)
-//
-// 			 "mov $0x20, %%rcx\n"										//rcx = ALIGNMENT_COUNT
-// 			 "add %%rcx, 0x18(%[buffer])\n"								//buffer->shift += rcx
-//
-// 			 "and $0x3ff, %%r8\n"										//hash &= 1024 - 1 | hash %= buckets->size
-// 			 "mov 0x8(%%rbx), %%rax\n"									//rax = buckets->lists
-// 			 "lea (%%r8, %%r8, 2), %%r8\n"								//r8 = 3 * r8
-// 			 "lea (%%rax, %%r8, 8), %%rax\n"							//rax = rax + 8 * r8 | buckets->lists + (hash % buckets->size)
-// 			 "mov %%rax, %[list]\n"										//list = rax
-//
-// 			 : [list] 	"=r" (list),									//output parameter
-// 			   "+o" (word)												//input and output parameter
-// 			 : [buffer] 	"r" (buffer),								//input parameters
-// 			   [buckets] 	"r" (buckets),
-// 			   [word] 		"r" (word)
-// 			 : "%r12", "%rbx", "%rsi", "%rdi", "%r8",					//changed registers
-// 			   "%rax", "%rcx", "%r11", "memory"
-// 		);
-// 		return list;
-		*word = buffer->data + buffer->shift;
-		size_t hash = crc32IntrinsicHash(*word, ALIGNMENT_COUNT);
+		List_t* list = NULL;
+		asm volatile (
+			 "mov 0x8(%[buffer]), %%r12\n"								//r12 = buffer->data
+			 "add 0x18(%[buffer]), %%r12\n"								//r12 += buffer->shift
+			 "mov %%r12, (%[word])\n"									//*word = r12;
 
-		buffer->shift += ALIGNMENT_COUNT;
-		return buckets->lists + (hash % buckets->size);
+			 "mov %[buckets], %%rbx\n"									//rbx = buckets
+			 "mov $0x20, %%rsi\n"										//rsi = length
+			 "mov %%r12, %%rdi\n"
+			 "call crc32Asm\n"											//
+			 "mov %%rax, %%r8\n"										//hash = buckets->hash_function(*word, length)
+
+			 "mov $0x20, %%rcx\n"										//rcx = ALIGNMENT_COUNT
+			 "add %%rcx, 0x18(%[buffer])\n"								//buffer->shift += rcx
+
+			 "and $0x3ff, %%r8\n"										//hash &= 1024 - 1 | hash %= buckets->size
+			 "mov 0x8(%%rbx), %%rax\n"									//rax = buckets->lists
+			 "lea (%%r8, %%r8, 2), %%r8\n"								//r8 = 3 * r8
+			 "lea (%%rax, %%r8, 8), %%rax\n"							//rax = rax + 8 * r8 | buckets->lists + (hash % buckets->size)
+			 "mov %%rax, %[list]\n"										//list = rax
+
+			 : [list] 		"=r" (list),								//output parameter
+			   "+o" (word)												//input and output parameter
+			 : [buffer] 	"r" (buffer),								//input parameters
+			   [buckets] 	"r" (buckets),
+			   [word] 		"r" (word)
+			 : "%r12", "%rbx", "%rsi", "%rdi", "%r8",					//changed registers
+			   "%rax", "%rcx", "%r11", "memory"
+		);
+		return list;
 	}
 #endif
 
