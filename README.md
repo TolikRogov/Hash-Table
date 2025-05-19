@@ -107,16 +107,14 @@ $$Load \space factor = \frac{Количество \space объектов \space
     <img src="Dump/img/Strlen.svg" alt="Strlen hash" width="1000">
 </figure>
 
-<div align="center">
 <details>
-    <summary>Рис. 3 - Распределение хэш-функции длины слова</summary>
+    <summary align="center">Рис. 3 - Распределение хэш-функции длины слова</summary>
 
     hash_t StrlenHash(const void* bytes, const size_t size_in_bytes) {
         return (hash_t)size_in_bytes;
     }
 
 </details>
-</div>
 
 <br>
 
@@ -124,9 +122,8 @@ $$Load \space factor = \frac{Количество \space объектов \space
     <img src="Dump/img/ASCIIsumNorm.svg" alt="ASCIIsum hash" width="1000">
 </figure>
 
-<div align="center">
 <details>
-    <summary>Рис. 4 - Распределение хэш-функции суммы ASCII кодов слова</summary>
+    <summary align="center">Рис. 4 - Распределение хэш-функции суммы ASCII кодов слова</summary>
 
     hash_t ASCIIsumHash(const void* bytes, const size_t size_in_bytes) {
 
@@ -140,7 +137,6 @@ $$Load \space factor = \frac{Количество \space объектов \space
     }
 
 </details>
-</div>
 
 <br>
 
@@ -162,9 +158,8 @@ $$Load \space factor = \frac{Количество \space объектов \space
     <img src="Dump/img/MURMUR1.svg" alt="MurMur1 hash" width="1000">
 </figure>
 
-<div align="center">
 <details style="text-align: center;">
-    <summary>Рис. 6 - Хэш-функция MurMur1</summary>
+    <summary align="center">Рис. 6 - Хэш-функция MurMur1</summary>
 
     hash_t MurMur1Hash(const void* bytes, const size_t size_in_bytes) {
 
@@ -202,7 +197,6 @@ $$Load \space factor = \frac{Количество \space объектов \space
     }
 
 </details>
-</div>
 
 <br>
 
@@ -210,9 +204,8 @@ $$Load \space factor = \frac{Количество \space объектов \space
     <img src="Dump/img/CRC32Norm1.svg" alt="CRC32 hash" width="1000">
 </figure>
 
-<div align="center">
 <details style="text-align: center;">
-    <summary>Рис. 7 - Распределение хэш-функции Crc32</summary>
+    <summary align="center">Рис. 7 - Распределение хэш-функции Crc32</summary>
 
     hash_t crc32Hash(const void* bytes, const size_t size_in_bytes) {
 
@@ -227,7 +220,6 @@ $$Load \space factor = \frac{Количество \space объектов \space
     }
 
 </details>
-</div>
 
 <br>
 
